@@ -29,10 +29,10 @@ void KalmanRollPitch_Predict(KalmanRollPitch *kal, float *gyro_mesures, float T)
     float A[4] = {tt*(q*cp-r*sp), (r*cp+q*sp)*(tt*tt+1.0f), 
                 -(r*cp+q*sp), 0.0f};
 
-    float Ptmp[4] = {T*(kal->Q[0] + 2.0f*A[0]*kal->P[0] + A[1]kal->P[1] + A[1]->kal[2]),
+    float Ptmp[4] = {T*(kal->Q[0] + 2.0f*A[0]*kal->P[0] + A[1]*kal->P[1] + A[1]*kal->P[2]),
                     T*(A[0]*kal->P[1] + A[2]*kal->P[0] + A[1]*kal->P[3] + A[3]*kal->P[1]),
                     T*(A[0]*kal->P[2] + A[2]*kal->P[0] + A[1]*kal->P[3] + A[3]*kal->P[2]),
-                    T*(kal->Q[1] + A[2]*kal->P[1] + A[2]*kal->P[2] + 2.0f*A[3*kal->P[3]])};
+                    T*(kal->Q[1] + A[2]*kal->P[1] + A[2]*kal->P[2] + 2.0f*A[3]*kal->P[3])};
 
     kal->P[0] = kal->P[0] + Ptmp[0];    kal->P[1] = kal->P[1] + Ptmp[1];
     kal->P[2] = kal->P[2] + Ptmp[2];    kal->P[3] = kal->P[3] + Ptmp[3];
@@ -73,4 +73,5 @@ void KalmanRollPitch_Update(KalmanRollPitch *kal, float *acc_mesures) {
 
     kal->phi = kal->phi+K[0]*(ax-h[0])+K[1]*(ay-h[1])+K[2]*(az-h[2]);
     kal->theta = kal->theta+K[3]*(ax-h[0])+K[4]*(ay-h[1])+K[5]*(az-h[2]);
+}   kal->theta = kal->theta+K[3]*(ax-h[0])+K[4]*(ay-h[1])+K[5]*(az-h[2]);
 }
