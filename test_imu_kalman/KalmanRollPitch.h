@@ -1,6 +1,5 @@
-#ifndef KALMAN_ROLL_PITCH_H
-#define KALMAN_ROLL_PITCH_H
 
+#include "pogobot.h"
 #include <math.h>
 
 #define g ((float) 9.81f)
@@ -17,5 +16,3 @@ typedef struct {
 void KalmanRollPitch_Init(KalmanRollPitch *kal, float Pinit, float *Q, float *R);
 void KalmanRollPitch_Predict(KalmanRollPitch *kal, float *gyro_mesures, float T);
 void KalmanRollPitch_Update(KalmanRollPitch *kal, float *acc_mesures);
-
-#endif

@@ -73,5 +73,6 @@ void KalmanRollPitch_Update(KalmanRollPitch *kal, float *acc_mesures) {
 
     kal->phi = kal->phi+K[0]*(ax-h[0])+K[1]*(ay-h[1])+K[2]*(az-h[2]);
     kal->theta = kal->theta+K[3]*(ax-h[0])+K[4]*(ay-h[1])+K[5]*(az-h[2]);
-}   kal->theta = kal->theta+K[3]*(ax-h[0])+K[4]*(ay-h[1])+K[5]*(az-h[2]);
+   kal->theta = kal->theta+K[3]*(ax-h[0])+K[4]*(ay-h[1])+K[5]*(az-h[2]);
+
 }
