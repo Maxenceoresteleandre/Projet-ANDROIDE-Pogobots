@@ -14,9 +14,16 @@
 #define MAX_LENGTH 50
 
 
+
 int main(int argc, char* argv[]) {
     float gyrPrev[3] = {0.0f, 0.0f, 0.0f};
     float accPrev[3] = {0.0f, 0.0f, 0.0f};
+    KalmanRollPitch ekf;
+    KalmanRollPitch *EKFptr = &ekf;
+    float Q[2] = {KALMAN_Q, KALMAN_Q};
+    float R[3] = {KALMAN_R, KALMAN_R, KALMAN_R}; // pas très sure de tout ce bazar
+    KalmanRollPitch_Init(EKFptr, KALMAN_P_INIT, Q, R);
+
 
     int i=0;
     while (i<1000) {
@@ -36,20 +43,27 @@ int main(int argc, char* argv[]) {
         gyroNew[1] = ALPHAGYR*gyrPrev[1] + (1.0f-ALPHAGYR)*gyro[1];
         gyroNew[2] = ALPHAGYR*gyrPrev[2] + (1.0f-ALPHAGYR)*gyro[2];
 
-        KalmanRollPitch ekf;
-        float Q[2] = {KALMAN_Q, KALMAN_Q};
-        float R[3] = {KALMAN_R, KALMAN_R, KALMAN_R}; // pas très sure de tout ce bazar
-        KalmanRollPitch_Init(&ekf, KALMAN_P_INIT, Q, R);
-        KalmanRollPitch_Predict(&ekf, gyroNew, 0.001f*KALMAN_PREDICT_PERIOD_MS);
-        KalmanRollPitch_Update(&ekf, accNew);
+        
+        //KalmanRollPitch_Predict(EKFptr, gyroNew, 0.001f*KALMAN_PREDICT_PERIOD_MS);
+        //KalmanRollPitch_Update(EKFptr, accNew);
 
 
-        printf("---------------- Avant filtre ----------------\n\\
-                Acc = (%f %f %f), Gyro = (%f %f %f)\n\\
-                ---------------- Après filtre ----------------\n\\
-                Acc = (%f %f %f), Gyro = (%f %f %f)\n",
-                acc[0], acc[1], acc[2], gyro[0], gyro[1], gyro[2],
-                accNew[0], accNew[1], accNew[2], gyroNew[0], gyroNew[1], gyroNew[2]);
+        printf("---------------- Avant filtre ----------------\n");
+        printf("Acc = (");
+        print_f_list(acc, 3, 100);
+        printf(")\n");
+        printf("Gyro = (");
+        print_f_list(gyro, 3, 100);
+        printf(")\n");
+
+        printf("---------------- Après filtre ----------------\n");
+        printf("Acc = (");
+        print_f_list(accNew, 3, 100);
+        printf(")");
+        printf("Gyro = (");
+        print_f_list(gyroNew, 3, 100);
+        printf(")");
+
         i++;
     }
 

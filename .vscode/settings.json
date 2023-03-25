@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "kalmanrollpitch.h": "c"
+        "kalmanrollpitch.h": "c",
+        "tiny_ekf.h": "c"
     }
 }
