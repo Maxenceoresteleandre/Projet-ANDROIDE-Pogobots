@@ -10,80 +10,46 @@
  */
 
 
-#include "pogobot.h"
-
-/**
-  * Initializes an EKF structure.
-  * @param ekf pointer to EKF structure to initialize
-  * @param n number of state variables
-  * @param m number of observables
-  *
-  * <tt>ekf</tt> should be a pointer to a structure defined as follows, where <tt>N</tt> and </tt>M</tt> are 
-  * constants:
-  * <pre>
-        int n;           // number of state values 
-        int m;           // number of observables 
-        double x[N];     // state vector
-        double P[N][N];  // prediction error covariance
-        double Q[N][N];  // process noise covariance 
-        double R[M][M];  // measurement error covariance
-        double G[N][M];  // Kalman gain; a.k.a. K
-        double F[N][N];  // Jacobian of process model
-        double H[M][N];  // Jacobian of measurement model
-        double Ht[N][M]; // transpose of measurement Jacobian
-        double Ft[N][N]; // transpose of process Jacobian
-        double Pp[N][N]; // P, post-prediction, pre-update
-        double fx[N];   // output of user defined f() state-transition function
-        double hx[M];   // output of user defined h() measurement function
-      &nbsp; // temporary storage
-        double tmp0[N][N];
-        double tmp1[N][Msta];
-        double tmp2[M][N];
-        double tmp3[M][M];
-        double tmp4[M][M];
-        double tmp5[M]; 
-    * </pre>
-  */
+//#include "pogobot.h"
+#include <stdio.h>
 
 #define Nsta 6
 #define Mobs 6
-// ^ ax, ay, az, gx, gy, gz
+// Nsta : nb de valeurs d'états, Mobs : nb de valeurs observées => supposons m = n, i.e ax, ay, az, gx, gy, gz 
+
 
 typedef struct {
 
-    int n;          /* number of state values */
-    int m;          /* number of observables */
-
     double x[Nsta];    /* state vector */
 
-    double P[Nsta][Nsta];  /* prediction error covariance */
-    double Q[Nsta][Nsta];  /* process noise covariance */
-    double R[Mobs][Mobs];  /* measurement error covariance */
+    double P[Nsta*Nsta];  /* prediction error covariance */
+    double Q[Nsta*Nsta];  /* process noise covariance */
+    double R[Mobs*Mobs];  /* measurement error covariance */
 
-    double G[Nsta][Mobs];  /* Kalman gain; a.k.a. K */
+    double G[Nsta*Mobs];  /* Kalman gain; a.k.a. K */
 
-    double F[Nsta][Nsta];  /* Jacobian of process model */
-    double H[Mobs][Nsta];  /* Jacobian of measurement model */
+    double F[Nsta*Nsta];  /* Jacobian of process model */
+    double H[Mobs*Nsta];  /* Jacobian of measurement model */
 
-    double Ht[Nsta][Mobs]; /* transpose of measurement Jacobian */
-    double Ft[Nsta][Nsta]; /* transpose of process Jacobian */
-    double Pp[Nsta][Nsta]; /* P, post-prediction, pre-update */
+    double Ht[Nsta*Mobs]; /* transpose of measurement Jacobian */
+    double Ft[Nsta*Nsta]; /* transpose of process Jacobian */
+    double Pp[Nsta*Nsta]; /* P, post-prediction, pre-update */
 
-    double fx[Nsta];   /* output of user defined f() state-transition function */
-    double hx[Mobs];   /* output of user defined h() measurement function */
+    double fx[Nsta];  /* output of user defined f() state-transition function */
+    double hx[Mobs];  /* output of user defined h() measurement function */
 
     /* temporary storage */
-    double tmp0[Nsta][Nsta];
-    double tmp1[Nsta][Mobs];
-    double tmp2[Mobs][Nsta];
-    double tmp3[Mobs][Mobs];
-    double tmp4[Mobs][Mobs];
+    double tmp0[Nsta*Nsta];
+    double tmp1[Nsta*Mobs];
+    double tmp2[Mobs*Nsta];
+    double tmp3[Mobs*Mobs];
+    double tmp4[Mobs*Mobs];
     double tmp5[Mobs]; 
 
-} ekf_t; 
+} ekf_t;
 
 
-void ekf_init(void * ekf, int n, int m);
+void ekf_init(ekf_t* ekf, int n, int m);
 
 /**
   * Runs one step of EKF prediction and update. Your code should first build a model, setting
@@ -92,4 +58,4 @@ void ekf_init(void * ekf, int n, int m);
   * @param z array of measurement (observation) values
   * @return 0 on success, 1 on failure caused by non-positive-definite matrix.
   */
-int ekf_step(void * ekf, double * z);
+int ekf_step(ekf_t* ekf, double * z, int n, int m);
