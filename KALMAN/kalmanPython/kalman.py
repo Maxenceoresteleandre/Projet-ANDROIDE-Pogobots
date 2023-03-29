@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
  
 # Author: Addison Sears-Collins
 # https://automaticaddison.com
@@ -8,7 +9,7 @@ import numpy as np
 np.set_printoptions(precision=3,suppress=True)
  
 # A matrix
-# 3x3 matrix -> number of states x number of states matrix
+# 6x6 matrix -> number of states x number of states matrix
 # Expresses how the state of the system [x,y,yaw] changes 
 # from k-1 to k when no control command is executed.
 # Typically a robot on wheels only drives when the wheels are told to turn.
@@ -34,9 +35,9 @@ process_noise_v_k_minus_1 = np.array([0.01, 0.01, 0.01, 0.01, 0.01, 0.01])
 Q_k = np.array([[1.0,   0,   0,   0,   0,   0],
                 [  0, 1.0,   0,   0,   0,   0],
                 [  0,   0, 1.0,   0,   0,   0],
-                [  0,   0,   0, 1.0,   0,   0],
-                [  0,   0,   0,   0, 1.0,   0],
-                [  0,   0,   0,   0,   0, 1.0]])
+                [  0,   0,   0, 0.1,   0,   0],
+                [  0,   0,   0,   0, 0.1,   0],
+                [  0,   0,   0,   0,   0, 0.1]])
                  
 # Measurement matrix H_k
 # Used to convert the predicted state estimate at time k
@@ -65,11 +66,12 @@ R_k = np.array([[1.0,   0,   0,   0,   0,   0],
                  
 # Sensor noise. This is a vector with the
 # number of elements equal to the number of sensor measurements.
-sensor_noise_w_k = np.array([0.07, 0.07, 0.07, 0.07, 0.07, 0.07])
+sensor_noise_w_k = np.array([0.07, 0.07, 0.07, 0.04, 0.04, 0.04])
 
+
+TEST = 1
  
-def ekf(z_k_observation_vector, state_estimate_k_minus_1, 
-        control_vector_k_minus_1, P_k_minus_1, dk):
+def ekf(z_k_observation_vector, state_estimate_k_minus_1, P_k_minus_1, dk):
     """
     Extended Kalman Filter. Fuses noisy sensor measurement to 
     create an optimal estimate of the state of the robotic system.
@@ -85,23 +87,20 @@ def ekf(z_k_observation_vector, state_estimate_k_minus_1,
             3x1 NumPy Array [v,v,yaw rate] in the global reference frame
             in [meters per second,meters per second,radians per second].
         :param P_k_minus_1 The state covariance matrix estimate at time k-1
-            3x3 NumPy Array
+            6x6 NumPy Array
         :param dk Time interval in seconds
              
     OUTPUT
         :return state_estimate_k near-optimal state estimate at time k  
             3x1 NumPy Array ---> [meters,meters,radians]
         :return P_k state covariance_estimate for time k
-            3x3 NumPy Array                 
+            6x6 NumPy Array                 
     """
     ######################### Predict #############################
     # Predict the state estimate at time k based on the state 
     # estimate at time k-1 and the control input applied at time k-1.
-    state_estimate_k = A_k_minus_1 @ (
-            state_estimate_k_minus_1) @ (
-            control_vector_k_minus_1) + (
-            process_noise_v_k_minus_1)
-             
+    state_estimate_k = A_k_minus_1 @ state_estimate_k_minus_1 + process_noise_v_k_minus_1
+    
     print(f'State Estimate Before EKF={state_estimate_k}')
              
     # Predict the state covariance estimate based on the previous
@@ -151,32 +150,52 @@ def main():
  
     # Create a list of sensor observations at successive timesteps
     # Each list within z_k is an observation vector.
-    z_k = np.array([[-71, 215, -10204, 7, -2, 0], 
-                    [67, 272, -10199, 6, 0, -2], 
-                    [129, 349, -10204, 6, 0, 0],
-                    [90, 220, -10185, 6, -1, 0],
-                    [-306, 124, -10295, 8, 3, 0],
-                    [210, 488, -10180, 9, 0, 0],
-                    [57, 177, -10175, 9, 0, 0],
-                    [0, 363, -10080, 9, 0, 1]])# k=8
+
+    if TEST == 1:
+        f = open("../test_imu_kalman//imu_data.txt")
+    elif TEST == 2:
+        f = open("../test_imu_kalman/imu_motor512.txt")
+    elif TEST == 3:
+        f = open("../test_imu_kalman/imu_motor1023.txt")
+    else: 
+        print("TEST incorrect")
+
+    l = f.readlines()
+    L = len(l)
+    f.close()
+
+    z_k = np.zeros((len(l)//2, 6))
+    print(z_k.shape)
+
+    j = 0
+    for i in range(len(l)):
+        seqBis = l[i].split()
+        # formatage:
+        # seqBis = [sensor, x, coordX, y, coordY, z, coordZ] => len = 7
+
+        # ACCELERATION READ
+        if seqBis[0] == 'Acc':
+            z_k[j][0] = (int(seqBis[2])/1000)
+            z_k[j][1] = (int(seqBis[4])/1000)
+            z_k[j][2] = (int(seqBis[6])/1000)
+        # GYROSCOPE READ
+        elif seqBis[0] == 'Gyro':
+            z_k[j][3] = (int(seqBis[2])/100)
+            z_k[j][4] = (int(seqBis[4])/100)
+            z_k[j][5] = (int(seqBis[6])/100)
+            j+=1
+        else:
+            print("fichier corrompu")
+          
                      
     # The estimated state vector at time k-1 in the global reference frame.
     # [accx_k_minus_1, accy_k_minus_1, accyaw_k_minus_1, gyrox_k_minus_1, gyroy_k_minus_1, gyroyaw_k_minus_1]
     # [m/s2, m/s2, m/s2, rad, rad, rad]
-    state_estimate_k_minus_1 = np.array([0.0, 0.0, -9810, 0.0, 0.0, 0.0])
-     
-    # The control input vector at time k-1 in the global reference frame.
-    # [v, yaw_rate]
-    # [meters/second, radians/second]
-    # In the literature, this is commonly u.
-    # Because there is no angular velocity and the robot begins at the 
-    # origin with a 0 radians yaw angle, this robot is traveling along 
-    # the positive x-axis in the global reference frame.
-    control_vector_k_minus_1 = np.array([4.5,0.0])
+    state_estimate_k_minus_1 = np.array([0.0, 0.0, -9.81, 0.0, 0.0, 0.0])
      
     # State covariance matrix P_k_minus_1
     # This matrix has the same number of rows (and columns) as the 
-    # number of states (i.e. 3x3 matrix). P is sometimes referred
+    # number of states (i.e. 6x6 matrix). P is sometimes referred
     # to as Sigma in the literature. It represents an estimate of 
     # the accuracy of the state estimate at time k made using the
     # state transition matrix. We start off with guessed values.
@@ -187,9 +206,16 @@ def main():
                             [  0,   0,   0,   0, 1.0,   0],
                             [  0,   0,   0,   0,   0, 1.0]])
                              
-    # Start at k=1 and go through each of the 5 sensor observations, 
+    # Start at k=1 and go through each of the 8 sensor observations, 
     # one at a time. 
-    # We stop right after timestep k=5 (i.e. the last sensor observation)
+    # We stop right after timestep k=8 (i.e. the last sensor observation)
+
+    accX_after_EKF = []
+    accY_after_EKF = []
+    accZ_after_EKF = []
+    gyroX_after_EKF = []
+    gyroY_after_EKF = []
+    gyroZ_after_EKF = []
     for k, obs_vector_z_k in enumerate(z_k,start=1):
      
         # Print the current timestep
@@ -200,16 +226,55 @@ def main():
         optimal_state_estimate_k, covariance_estimate_k = ekf(
             obs_vector_z_k, # Most recent sensor measurement
             state_estimate_k_minus_1, # Our most recent estimate of the state
-            control_vector_k_minus_1, # Our most recent control input
             P_k_minus_1, # Our most recent state covariance matrix
             dk) # Time interval
          
         # Get ready for the next timestep by updating the variable values
         state_estimate_k_minus_1 = optimal_state_estimate_k
         P_k_minus_1 = covariance_estimate_k
-         
+        accX_after_EKF.append(optimal_state_estimate_k[0])
+        accY_after_EKF.append(optimal_state_estimate_k[1])
+        accZ_after_EKF.append(optimal_state_estimate_k[2])
+        gyroX_after_EKF.append(optimal_state_estimate_k[3])
+        gyroY_after_EKF.append(optimal_state_estimate_k[4])
+        gyroZ_after_EKF.append(optimal_state_estimate_k[5])
+        
         # Print a blank line
         print()
  
-# Program starts running here with the main method  
-main()
+    return accX_after_EKF, accY_after_EKF, accZ_after_EKF, gyroX_after_EKF, gyroY_after_EKF, gyroZ_after_EKF, L
+
+
+accX, accY, accZ, gyroX, gyroY, gyroZ, L = main()
+iter = range(1, L//2+1)
+# plot
+pltAcc = plt.subplot(211)
+pltAcc.plot(iter, accX, label="acc X")
+pltAcc.plot(iter, accY, label="acc Y")
+pltAcc.plot(iter, accZ,label="acc Z")
+pltAcc.set_xlabel("timestep")
+pltAcc.set_ylabel("acc (m/s^2)")
+
+titre = "Accélération et Position angulaire sur les axes x,, et z au cours du temps APRES EKF"
+if TEST == 1:
+    titre+=" (sans moteur)"
+elif TEST == 2:
+    titre+=" (moteur m à 512)"
+elif TEST == 3:
+    titre+=" (moteur m à 1023)"
+pltAcc.set_title(titre)
+pltAcc.legend()
+
+pltGyro = plt.subplot(212)
+pltGyro.plot(iter, gyroX, label="gyro X")
+pltGyro.plot(iter, gyroY, label="gyro Y")
+pltGyro.plot(iter, gyroZ, label="gyro Z")
+pltGyro.set_xlabel("timestep")
+pltGyro.set_ylabel("gyro (rads)")
+pltGyro.set_yticks([-np.pi, -np.pi/2, 0, np.pi/2, np.pi], [r'$-\pi$', r'$-\frac{ \pi }{ 2 }$', '$0$', r'$\frac{ \pi }{ 2 }$',
+                                                        r'$\pi$'])
+pltGyro.legend()
+
+
+
+plt.show()
