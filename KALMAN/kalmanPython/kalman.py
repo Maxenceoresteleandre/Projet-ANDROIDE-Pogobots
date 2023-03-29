@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
  
+# adapté de:
 # Author: Addison Sears-Collins
 # https://automaticaddison.com
 # Description: Extended Kalman Filter example (two-wheeled mobile robot)
@@ -10,11 +11,10 @@ np.set_printoptions(precision=3,suppress=True)
  
 # A matrix
 # 6x6 matrix -> number of states x number of states matrix
-# Expresses how the state of the system [x,y,yaw] changes 
+# Expresses how the state of the system [accx, accy, accz, gyrox, gyroy, gyroz] changes 
 # from k-1 to k when no control command is executed.
 # Typically a robot on wheels only drives when the wheels are told to turn.
 # For this case, A is the identity matrix.
-# A is sometimes F in the literature.
 A_k_minus_1 = np.array([[1.0,   0,   0,   0,   0,   0],
                         [  0, 1.0,   0,   0,   0,   0],
                         [  0,   0, 1.0,   0,   0,   0],
@@ -32,19 +32,19 @@ process_noise_v_k_minus_1 = np.array([0.01, 0.01, 0.01, 0.01, 0.01, 0.01])
 # When Q is large, the Kalman Filter tracks large changes in 
 # the sensor measurements more closely than for smaller Q.
 # Q is a square matrix that has the same number of rows as states.
-Q_k = np.array([[1.0,   0,   0,   0,   0,   0],
-                [  0, 1.0,   0,   0,   0,   0],
-                [  0,   0, 1.0,   0,   0,   0],
-                [  0,   0,   0, 0.1,   0,   0],
-                [  0,   0,   0,   0, 0.1,   0],
-                [  0,   0,   0,   0,   0, 0.1]])
+Q_k = np.array([[3.0,   0,   0,   0,   0,   0],
+                [  0, 3.0,   0,   0,   0,   0],
+                [  0,   0, 3.0,   0,   0,   0],
+                [  0,   0,   0, 1.0,   0,   0],
+                [  0,   0,   0,   0, 1.0,   0],
+                [  0,   0,   0,   0,   0, 1.0]])
                  
 # Measurement matrix H_k
 # Used to convert the predicted state estimate at time k
 # into predicted sensor measurements at time k.
 # In this case, H will be the identity matrix since the 
 # estimated state maps directly to state measurements from the 
-# odometry data [x, y, yaw]
+# odometry data [accx, accy, accz, gyrox, gyroy, gyroz]
 # H has the same number of rows as sensor measurements
 # and same number of columns as states.
 H_k = np.array([[1.0,   0,   0,   0,   0,   0],
@@ -57,9 +57,9 @@ H_k = np.array([[1.0,   0,   0,   0,   0,   0],
 # Sensor measurement noise covariance matrix R_k
 # Has the same number of rows and columns as sensor measurements.
 # If we are sure about the measurements, R will be near zero.
-R_k = np.array([[1.0,   0,   0,   0,   0,   0],
-                [  0, 1.0,   0,   0,   0,   0],
-                [  0,   0, 1.0,   0,   0,   0],
+R_k = np.array([[3.0,   0,   0,   0,   0,   0],
+                [  0, 3.0,   0,   0,   0,   0],
+                [  0,   0, 3.0,   0,   0,   0],
                 [  0,   0,   0, 1.0,   0,   0],
                 [  0,   0,   0,   0, 1.0,   0],
                 [  0,   0,   0,   0,   0, 1.0]])  
@@ -78,21 +78,18 @@ def ekf(z_k_observation_vector, state_estimate_k_minus_1, P_k_minus_1, dk):
          
     INPUT
         :param z_k_observation_vector The observation from the Odometry
-            3x1 NumPy Array [x,y,yaw] in the global reference frame
-            in [meters,meters,radians].
+            6x1 NumPy Array [accx, accy, accz, gyrox, gyroy, gyroz] in the global reference frame
+            in [m/s2, m/s2, m/s2, rad, rad, rad].
         :param state_estimate_k_minus_1 The state estimate at time k-1
-            3x1 NumPy Array [x,y,yaw] in the global reference frame
-            in [meters,meters,radians].
-        :param control_vector_k_minus_1 The control vector applied at time k-1
-            3x1 NumPy Array [v,v,yaw rate] in the global reference frame
-            in [meters per second,meters per second,radians per second].
+            6x1 NumPy Array [accx, accy, accz, gyrox, gyroy, gyroz] in the global reference frame
+            in [m/s2, m/s2, m/s2, rad, rad, rad].
         :param P_k_minus_1 The state covariance matrix estimate at time k-1
             6x6 NumPy Array
         :param dk Time interval in seconds
              
     OUTPUT
         :return state_estimate_k near-optimal state estimate at time k  
-            3x1 NumPy Array ---> [meters,meters,radians]
+            6x1 NumPy Array ---> [m/s2, m/s2, m/s2, rad, rad, rad]
         :return P_k state covariance_estimate for time k
             6x6 NumPy Array                 
     """
@@ -255,7 +252,7 @@ pltAcc.plot(iter, accZ,label="acc Z")
 pltAcc.set_xlabel("timestep")
 pltAcc.set_ylabel("acc (m/s^2)")
 
-titre = "Accélération et Position angulaire sur les axes x,, et z au cours du temps APRES EKF"
+titre = "Données de l'IMU APRES EKF"
 if TEST == 1:
     titre+=" (sans moteur)"
 elif TEST == 2:

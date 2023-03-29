@@ -55,7 +55,7 @@ for TEST in [1, 2, 3]:
     pltAcc.set_xlabel("timestep")
     pltAcc.set_ylabel("acc (m/s^2)")
 
-    titre = "Accélération et Position angulaire sur les axes x, y et z au cours du temps"
+    titre = "Données de l'IMU BRUTES"
     if TEST == 1:
         titre+=" (sans moteur)"
     elif TEST == 2:
