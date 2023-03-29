@@ -68,7 +68,7 @@ R_k = np.array([[3.0,   0,   0,   0,   0,   0],
 # number of elements equal to the number of sensor measurements.
 sensor_noise_w_k = np.array([0.07, 0.07, 0.07, 0.04, 0.04, 0.04])
 
-
+# fichier 
 TEST = 1
  
 def ekf(z_k_observation_vector, state_estimate_k_minus_1, P_k_minus_1, dk):
@@ -149,7 +149,7 @@ def main():
     # Each list within z_k is an observation vector.
 
     if TEST == 1:
-        f = open("../test_imu_kalman//imu_data.txt")
+        f = open("../test_imu_kalman//imu_noMotor.txt")
     elif TEST == 2:
         f = open("../test_imu_kalman/imu_motor512.txt")
     elif TEST == 3:

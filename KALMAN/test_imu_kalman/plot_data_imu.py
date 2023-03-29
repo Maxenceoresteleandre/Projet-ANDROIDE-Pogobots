@@ -6,7 +6,7 @@ TEST = 1 # 1: sans moteur; 2: moteur à 512; 3: moteur à 1023
 
 for TEST in [1, 2, 3]:
     if TEST == 1:
-        f = open("imu_data.txt")
+        f = open("imu_noMotor.txt")
     elif TEST == 2:
         f = open("imu_motor512.txt")
     elif TEST == 3:
