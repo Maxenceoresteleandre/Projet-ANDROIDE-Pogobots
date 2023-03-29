@@ -6,6 +6,11 @@ import matplotlib.pyplot as plt
 # https://automaticaddison.com
 # Description: Extended Kalman Filter example (two-wheeled mobile robot)
  
+
+# fichier à traiter 
+TEST = 3 # 1: pas de moteurs, 2: 512, 3: 1023
+
+
 # Supress scientific notation when printing NumPy arrays
 np.set_printoptions(precision=3,suppress=True)
  
@@ -26,18 +31,18 @@ A_k_minus_1 = np.array([[1.0,   0,   0,   0,   0,   0],
 # of the estimated state at time k from the state
 # transition model of the mobile robot). This is a vector
 # with the number of elements equal to the number of states
-process_noise_v_k_minus_1 = np.array([0.01, 0.01, 0.01, 0.01, 0.01, 0.01])
+process_noise_v_k_minus_1 = np.array([0.1, 0.1, 0.1, 0.01, 0.01, 0.01])
      
 # State model noise covariance matrix Q_k
 # When Q is large, the Kalman Filter tracks large changes in 
 # the sensor measurements more closely than for smaller Q.
 # Q is a square matrix that has the same number of rows as states.
-Q_k = np.array([[3.0,   0,   0,   0,   0,   0],
-                [  0, 3.0,   0,   0,   0,   0],
-                [  0,   0, 3.0,   0,   0,   0],
-                [  0,   0,   0, 1.0,   0,   0],
-                [  0,   0,   0,   0, 1.0,   0],
-                [  0,   0,   0,   0,   0, 1.0]])
+Q_k = np.array([[0.1,   0,   0,   0,   0,   0],
+                [  0, 0.1,   0,   0,   0,   0],
+                [  0,   0, 0.1,   0,   0,   0],
+                [  0,   0,   0, 0.1,   0,   0],
+                [  0,   0,   0,   0, 0.1,   0],
+                [  0,   0,   0,   0,   0, 0.1]])
                  
 # Measurement matrix H_k
 # Used to convert the predicted state estimate at time k
@@ -57,19 +62,47 @@ H_k = np.array([[1.0,   0,   0,   0,   0,   0],
 # Sensor measurement noise covariance matrix R_k
 # Has the same number of rows and columns as sensor measurements.
 # If we are sure about the measurements, R will be near zero.
-R_k = np.array([[3.0,   0,   0,   0,   0,   0],
-                [  0, 3.0,   0,   0,   0,   0],
-                [  0,   0, 3.0,   0,   0,   0],
-                [  0,   0,   0, 1.0,   0,   0],
-                [  0,   0,   0,   0, 1.0,   0],
-                [  0,   0,   0,   0,   0, 1.0]])  
+if TEST == 1:
+    # pas de moteur
+    R_k = np.array([[10,   0,   0,   0,   0,   0],
+                    [  0, 10,   0,   0,   0,   0],
+                    [  0,   0, 10,   0,   0,   0],
+                    [  0,   0,   0, 10,   0,   0],
+                    [  0,   0,   0,   0, 10,   0],
+                    [  0,   0,   0,   0,   0, 10]])
+elif TEST == 2:
+    # moteurs gauche et droit à 512
+    R_k = np.array([[50.0,   0,   0,   0,   0,   0],
+                    [  0, 50.0,   0,   0,   0,   0],
+                    [  0,   0, 50.0,   0,   0,   0],
+                    [  0,   0,   0, 50.0,   0,   0],
+                    [  0,   0,   0,   0, 50.0,   0],
+                    [  0,   0,   0,   0,   0, 50.0]])
+elif TEST == 3:
+    # moteurs gauche et droit à 1023
+    R_k = np.array([[100.0,   0,   0,   0,   0,   0],
+                    [  0, 100.0,   0,   0,   0,   0],
+                    [  0,   0, 100.0,   0,   0,   0],
+                    [  0,   0,   0, 100.0,   0,   0],
+                    [  0,   0,   0,   0, 100.0,   0],
+                    [  0,   0,   0,   0,   0, 100.0]])
+else:
+    print("TEST incorrect") 
                  
 # Sensor noise. This is a vector with the
 # number of elements equal to the number of sensor measurements.
-sensor_noise_w_k = np.array([0.07, 0.07, 0.07, 0.04, 0.04, 0.04])
+if TEST == 1:
+    # pas de moteur
+    sensor_noise_w_k = np.array([0.07, 0.07, 0.07, 0.04, 0.04, 0.04])
+elif TEST == 2:
+    # moteurs gauche et droit à 512
+    sensor_noise_w_k = np.array([0.07, 0.07, 0.07, 0.04, 0.04, 0.04])
+elif TEST == 3:
+    # moteurs gauche et droit à 1023
+    sensor_noise_w_k = np.array([0.07, 0.07, 0.07, 0.04, 0.04, 0.04])
+else:
+    print("TEST incorrect")
 
-# fichier 
-TEST = 1
  
 def ekf(z_k_observation_vector, state_estimate_k_minus_1, P_k_minus_1, dk):
     """
@@ -149,11 +182,11 @@ def main():
     # Each list within z_k is an observation vector.
 
     if TEST == 1:
-        f = open("../test_imu_kalman//imu_noMotor.txt")
+        f = open("../test_imu_kalman//imu_straight_noMotor.txt")
     elif TEST == 2:
-        f = open("../test_imu_kalman/imu_motor512.txt")
+        f = open("../test_imu_kalman/imu_straight_512lr.txt")
     elif TEST == 3:
-        f = open("../test_imu_kalman/imu_motor1023.txt")
+        f = open("../test_imu_kalman/imu_straight_1023lr.txt")
     else: 
         print("TEST incorrect")
 
@@ -256,9 +289,9 @@ titre = "Données de l'IMU APRES EKF"
 if TEST == 1:
     titre+=" (sans moteur)"
 elif TEST == 2:
-    titre+=" (moteur m à 512)"
+    titre+=" (moteurs l,r à 512)"
 elif TEST == 3:
-    titre+=" (moteur m à 1023)"
+    titre+=" (moteurs l,r à 1023)"
 pltAcc.set_title(titre)
 pltAcc.legend()
 
