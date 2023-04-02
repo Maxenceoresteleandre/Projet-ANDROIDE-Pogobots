@@ -87,6 +87,26 @@ void pseudo_inverse(float IM[][C], float mat[][C]) {
   }
 }
 
+void combine_arrays(float res[], float arr1[], float arr2[], int len1, int len2) {
+  int i;
+  for (i=0; i<len1; i++) {
+    res[i] = arr1[i];
+  }
+  for (int j=0; j<len2; j++) {
+    res[i+j] = arr2[j];
+  }
+}
+
+void split_array(float base[], float arr1[], float arr2[], int len1, int len2) {
+  int i;
+  for (i=0; i<len1; i++) {
+    arr1[i] = res[i];
+  }
+  for (int j=0; j<len2; j++) {
+    arr2[j] = res[i+j];
+  }
+}
+
 
 //##############################################################
 //##############################################################

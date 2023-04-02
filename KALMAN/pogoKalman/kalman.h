@@ -70,7 +70,10 @@ void identity_matrix(float matRes[][C]);
 void copy_matrix(float matRes[][C], float mat[][C], int r)
 
 
+// for convenience
 void print_f_matrix(float mat[][6], int rows);
+void combine_arrays(float res[], float arr1[], float arr2[], int len1, int len2);
+void split_array(float base[], float arr1[], float arr2[], int len1, int len2);
 
 
 // code for the extended Kalman Filter algorithm 
