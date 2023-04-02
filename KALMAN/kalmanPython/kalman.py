@@ -270,7 +270,7 @@ def main(TEST):
             
             # Print a blank line
             print()
- 
+
         iter = range(1, len(l)//2+1)
         # plot
         pltAcc = plt.subplot(211)

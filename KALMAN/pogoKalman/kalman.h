@@ -22,6 +22,7 @@
 #define C 6
 #define R2 6
 #define PSEUDO_INVERSE_MAX_ITER 30
+#define GRAVITY 9.81
 
 // multiply two matrices
 // mat1 : 6x6 or 1x6 (rows x colums)
@@ -66,7 +67,7 @@ void identity_matrix(float matRes[][C]);
 
 
 // copy mat to matRes
-void copy_matrix(float matRes[][C], float mat[][C]);
+void copy_matrix(float matRes[][C], float mat[][C], int r)
 
 
 void print_f_matrix(float mat[][6], int rows);
@@ -90,6 +91,16 @@ void extendedKalmanFilter(
     );
 
 //void init_kalman();
+void init_ekf(
+    float state_estimate_k_minus_1[][C],       // [1][6] 6x1
+    float P_k_minus_1[][C],                    // [6][6] 6x6
+    float A_k_minus_1[][C],                    // [6][6] 6x6
+    float process_noise_v_k_minus_1[][C],      // [1][6] 6x1
+    float Q_k[][C],                            // [6][6] 6x6
+    float R_k[][C],                            // [6][6] 6x6
+    float H_k[][C],                            // [6][6] 6x6
+    float sensor_noise_w_k[][C]                // [1][6] 6x1
+    );
 
 void print_float(float i, int precision);
 

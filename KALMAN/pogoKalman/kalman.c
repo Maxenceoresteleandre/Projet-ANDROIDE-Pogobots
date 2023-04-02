@@ -50,8 +50,8 @@ void identity_matrix(float matRes[][C]) {
   }
 }
 
-void copy_matrix(float matRes[][C], float mat[][C]) {
-  for (int i=0; i<C; i++)
+void copy_matrix(float matRes[][C], float mat[][C], int r) {
+  for (int i=0; i<r; i++)
     for (int j=0; j<C; j++)
       matRes[i][j] = mat[i][j];
 }
@@ -61,9 +61,9 @@ void pseudo_inverse(float IM[][C], float mat[][C]) {
   // https://integratedmlai.com/matrixinverse/
   float AM[C][C];
   float I[C][C];
-  copy_matrix(AM, mat);
+  copy_matrix(AM, mat), 6;
   identity_matrix(I);
-  copy_matrix(IM, I);
+  copy_matrix(IM, I, 6);
 
   for (int fd=0; fd<C; fd++) {
     float fdScaler = 1.0 / AM[fd][fd];
@@ -91,6 +91,58 @@ void pseudo_inverse(float IM[][C], float mat[][C]) {
 //##############################################################
 //##############################################################
 // EXTENDED KALMAN FILTER
+void init_ekf(
+    float state_estimate_k_minus_1[][C],       // [1][6] 6x1
+    float P_k_minus_1[][C],                    // [6][6] 6x6
+    float A_k_minus_1[][C],                    // [6][6] 6x6
+    float process_noise_v_k_minus_1[][C],      // [1][6] 6x1
+    float Q_k[][C],                            // [6][6] 6x6
+    float R_k[][C],                            // [6][6] 6x6
+    float H_k[][C],                            // [6][6] 6x6
+    float sensor_noise_w_k[][C]                // [1][6] 6x1
+    ) {
+      float initial_state_estimate[1][6] = {
+        {0.0, 0.0, -GRAVITY, 0.0, 0.0, 0.0}};
+      float initial_P_k[6][6] = {
+        {0.1, 0.0, 0.0, 0.0, 0.0, 0.0},
+        {0.0, 0.1, 0.0, 0.0, 0.0, 0.0},
+        {0.0, 0.0, 0.1, 0.0, 0.0, 0.0},
+        {0.0, 0.0, 0.0, 0.1, 0.0, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 0.1, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 0.0, 0.1}
+        };
+      float initial_Q_k[6][6] = {
+        {0.01, 0.0, 0.0, 0.0, 0.0, 0.0},
+        {0.0, 0.01, 0.0, 0.0, 0.0, 0.0},
+        {0.0, 0.0, 0.01, 0.0, 0.0, 0.0},
+        {0.0, 0.0, 0.0, 0.01, 0.0, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 0.01, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 0.0, 0.1}
+        };
+      float initial_R_k[6][6] = {
+        {1.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+        {0.0, 1.0, 0.0, 0.0, 0.0, 0.0},
+        {0.0, 0.0, 1.0, 0.0, 0.0, 0.0},
+        {0.0, 0.0, 0.0, 1.0, 0.0, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 1.0, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 0.0, 0.2}
+        };
+      float intial_process_noise[1][6] = {
+        {0.1, 0.1, 0.1, 0.01, 0.01, 0.01}
+      };
+      float initial_sensor_noise[1][6] = {
+        {0.07, 0.07, 0.07, 0.05, 0.05, 0.05}
+      };
+      copy_matrix(state_estimate_k_minus_1, initial_state_estimate, 1);
+      copy_matrix(P_k_minus_1, initial_P_k, 6);
+      identity_matrix(A_k_minus_1);
+      copy_matrix(process_noise_v_k_minus_1, intial_process_noise, 1);
+      copy_matrix(Q_k, initial_Q_k, 6);
+      copy_matrix(R_k, initial_R_k, 6);
+      identity_matrix(H_k);
+      copy_matrix(sensor_noise_w_k, initial_sensor_noise, 1);
+
+    }
 
 void extendedKalmanFilter(
     float z_k_observation_vector[][C],         // [1][6] 6x1
