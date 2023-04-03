@@ -15,6 +15,8 @@
 
 
 
+#define CALIBRATION_DURATION 500
+
 
 // Edit MACROs here, according to your Matrix Dimensions for
 // mat1[r1][C] and mat2[r2][C]
@@ -67,14 +69,17 @@ void identity_matrix(float matRes[][C]);
 
 
 // copy mat to matRes
-void copy_matrix(float matRes[][C], float mat[][C], int r)
+void copy_matrix(float matRes[][C], float mat[][C], int r);
 
 
 // for convenience
-void print_f_matrix(float mat[][6], int rows);
 void combine_arrays(float res[], float arr1[], float arr2[], int len1, int len2);
 void split_array(float base[], float arr1[], float arr2[], int len1, int len2);
+void print_kalman(int i, float state_estimate_k[][6], float acc[], float gyro[3]);
 
+
+// function to call
+void calibrate_pogobot(int power, int* leftMotorVal, int* rightMotorVal);
 
 // code for the extended Kalman Filter algorithm 
 // reproduction from the kalman.py file
@@ -95,6 +100,7 @@ void extendedKalmanFilter(
 
 //void init_kalman();
 void init_ekf(
+    int power,
     float state_estimate_k_minus_1[][C],       // [1][6] 6x1
     float P_k_minus_1[][C],                    // [6][6] 6x6
     float A_k_minus_1[][C],                    // [6][6] 6x6
@@ -105,6 +111,4 @@ void init_ekf(
     float sensor_noise_w_k[][C]                // [1][6] 6x1
     );
 
-void print_float(float i, int precision);
 
-void print_f_list(float* list, int len, int precision);
