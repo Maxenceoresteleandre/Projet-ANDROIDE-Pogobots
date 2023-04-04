@@ -291,7 +291,7 @@ void calibrate_pogobot(int power, int* leftMotorVal, int* rightMotorVal) {
         // CORRECT MOTOR VALUES
         float gyro_z = state_estimate_k[0][5];
         if ((gyro_z > 0.2f) || (gyro_z < -0.2f)) {
-          powerLeft += (int)(gyro_z * 25.0f);
+          powerLeft -= (int)(gyro_z * 7.5f);
         }
         pogobot_motor_set(motorL, powerLeft);
         pogobot_motor_set(motorR, powerRight); 

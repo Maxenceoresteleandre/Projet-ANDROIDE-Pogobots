@@ -15,7 +15,7 @@
 
 
 
-#define CALIBRATION_DURATION 500
+#define CALIBRATION_DURATION 175
 
 
 // Edit MACROs here, according to your Matrix Dimensions for
