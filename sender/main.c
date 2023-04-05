@@ -6,82 +6,45 @@
  * Please refer to file LICENCE for details.
 **/
 
-
-/** \file
-Pogobot demo source code D2.1, sender side.
-
-This file implements the sender side of demo "D2.1 Testing
-communication: introverted listener".
-
-It shows how short a code can be thanks to the API design.
-
-It exercises the following features: RGB LED, low-level infrared
-transmission API.
-
-Details:
-
-Robot A continuously emits a specific message in each direction
-- each message contains:
-  - name of robot (“robot A”)
-  - name of IR emitter (“front”, “back”, “left”, “right”)
-  - 26 letters (alphabet in lower case)
-- RBG LED is always white/black
-
- */
-
-/* clang-format-ok */
-
 #include <stdio.h>
 #include <string.h>
 #include "pogobot.h"
 
-#define robot_name "robot A"
-#define alphabet "abcdefghijklmnopqrstuvwyz"
-
-// typedef struct rgb8_t
-// {
-//     uint8_t r;
-//     uint8_t g;
-//     uint8_t b;
-// } rgb8_t;
-
-// typedef struct my_message_t
-// {
-//     char name[8];
-//     rgb8_t color;
-// } my_message_t;
-
-// // #FF0000, #00FF00, #0000FF, #FF00FF, #FFFF00, #00FFFF
-// #define NB_COLOR 6
-// rgb8_t my_color = { .r = 0xFF, .g = 0x00, .b = 0x00 }
-// my_message_t message = {}
+#define message_length_bytes 375
 
 int main(void) {
-
     pogobot_init();
 
     printf("init ok\n");
 
-    //pogobot_led_setColor( 25, 25, 25 );
-
-    // set to max
+    // pogobot_infrared_emitter_power_max - 3
+    // pogobot_infrared_emitter_power_twoThird - 2
+    // pogobot_infrared_emitter_power_oneThird - 1
+    // pogobot_infrared_emitter_power_null - 0
     pogobot_infrared_set_power(pogobot_infrared_emitter_power_twoThird);
 
-    while(1){  
-        pogobot_led_setColor( 0, 0, 255 );
-        msleep( 5000 );
+    unsigned char message[message_length_bytes];
+    int i;
+    for (i=0;i<message_length_bytes;i++){
+        message[i] = 'a';
+    }
+    message[i-1] = '\0';
 
-        printf( "Taille: %d ",message_length_bytes );
-        printf( "%s\n", message);
+    while(1){
+        // printf( "Taille: %d ",message_length_bytes);
+        // printf( "%s\n", message);
 
-
-        pogobot_infrared_sendMessageAllDirection( 0x1234, message,
-                                                message_length_bytes);
-        pogobot_infrared_update();   
-        pogobot_led_setColor(255,0,0);
-        msleep( 5000 );
+        pogobot_led_setColor( 255, 255, 255 );
+        msleep( 500 );
+        // 0 success
+        bool b = pogobot_infrared_sendMessageAllDirection( 0x1234, message,message_length_bytes);
+        if (b == 0){
+            printf("SENDING %d...\n",message_length_bytes);
+            pogobot_infrared_update();   
+            pogobot_led_setColor( 255, 0, 0 );
         }
-
+        msleep( 500 );
+    }
     msleep( 500 );
 
 }
