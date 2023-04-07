@@ -11,9 +11,14 @@ int main(int argc, char* argv[]) {
     int leftMotorVal;
     int rightMotorVal;
 
-    calibrate_pogobot(512, &leftMotorVal, &rightMotorVal);
+    pogobot_calibrate(1023, &leftMotorVal, &rightMotorVal);
 
     //("\n\nCalibrated motor values:\n\tLeft: %d\n\tRight: %d\n", leftMotorVal, rightMotorVal);
+    anim_same();
+
+    pogobot_motor_set(motorL, leftMotorVal);
+    pogobot_motor_set(motorR, rightMotorVal); 
+
     anim_same();
     
     return 1;

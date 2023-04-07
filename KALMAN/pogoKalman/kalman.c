@@ -9,18 +9,18 @@
 //##############################################################
 // MATRIX OPERATIONS
 
-void multMat(float matRes[][C], float mat1[][C], float mat2[][C], int r1) {
+void _multMatrixWidthC(float matRes[][C], float mat1[][C], float mat2[][C], int r1) {
     for (int i = 0; i < r1; i++) {
         for (int j = 0; j < C; j++) {
             matRes[i][j] = 0;
-            for (int k = 0; k < R2; k++) {
+            for (int k = 0; k < C; k++) {
                 matRes[i][j] += mat1[i][k] * mat2[k][j];
             }
         }
     }
 }
 
-void addMat(float matRes[][C], float mat1[][C], float mat2[][C], int r) {
+void _addMatrixWidthC(float matRes[][C], float mat1[][C], float mat2[][C], int r) {
   for (int i=0; i<r; i++) {
     for (int j=0; j<C; j++) {
       matRes[i][j] = mat1[i][j] + mat2[i][j];
@@ -28,7 +28,7 @@ void addMat(float matRes[][C], float mat1[][C], float mat2[][C], int r) {
   }
 }
 
-void subtractMat(float matRes[][C], float mat1[][C], float mat2[][C], int r) {
+void _subtractMatrixWidthC(float matRes[][C], float mat1[][C], float mat2[][C], int r) {
   for (int i=0; i<r; i++) {
     for (int j=0; j<C; j++) {
       matRes[i][j] = mat1[i][j] - mat2[i][j];
@@ -36,13 +36,13 @@ void subtractMat(float matRes[][C], float mat1[][C], float mat2[][C], int r) {
   }
 }
 
-void transpose(float matRes[][C], float mat[][C]) {
+void _transposeMatrixCbyC(float matRes[][C], float mat[][C]) {
   for (int i=0; i<C; i++)
     for (int j=0; j<C; j++)
       matRes[i][j] = mat[j][i];
 }
 
-void identity_matrix(float matRes[][C]) {
+void _identityMatrixCbyC(float matRes[][C]) {
   for (int i=0; i<C; i++) {
     for (int j=0; j<C; j++) {
       if (i==j) {
@@ -54,20 +54,20 @@ void identity_matrix(float matRes[][C]) {
   }
 }
 
-void copy_matrix(float matRes[][C], float mat[][C], int r) {
+void _copyMatrixWidthC(float matRes[][C], float mat[][C], int r) {
   for (int i=0; i<r; i++)
     for (int j=0; j<C; j++)
       matRes[i][j] = mat[i][j];
 }
 
-void pseudo_inverse(float IM[][C], float mat[][C]) {
-  // from the python code here:
+void _pseudoInverseMatrixCbyC(float IM[][C], float mat[][C]) {
+  // reproduced from the python code here:
   // https://integratedmlai.com/matrixinverse/
   float AM[C][C];
   float I[C][C];
-  copy_matrix(AM, mat, 6);
-  identity_matrix(I);
-  copy_matrix(IM, I, 6);
+  _copyMatrixWidthC(AM, mat, 6);
+  _identityMatrixCbyC(I);
+  _copyMatrixWidthC(IM, I, 6);
 
   for (int fd=0; fd<C; fd++) {
     float fdScaler = 1.0 / AM[fd][fd];
@@ -91,6 +91,12 @@ void pseudo_inverse(float IM[][C], float mat[][C]) {
   }
 }
 
+
+
+
+
+
+
 void combine_arrays(float res[], float arr1[], float arr2[], int len1, int len2) {
   int i;
   for (i=0; i<len1; i++) {
@@ -112,10 +118,14 @@ void split_array(float base[], float arr1[], float arr2[], int len1, int len2) {
 }
 
 
+
+
+
+
 //##############################################################
 //##############################################################
 // EXTENDED KALMAN FILTER
-void init_ekf(
+void initExtendedKalmanFilter(
     int power,
     float state_estimate_k_minus_1[][C],       // [1][6] 6x1
     float P_k_minus_1[][C],                    // [6][6] 6x6
@@ -144,7 +154,29 @@ void init_ekf(
         {0.0, 0.0, 0.0, 0.0, 0.01, 0.0},
         {0.0, 0.0, 0.0, 0.0, 0.0, 0.1}
         };
-      float initial_R_k[6][6] = {
+      float intial_process_noise[1][6] = {
+        {0.1, 0.1, 0.1, 0.01, 0.01, 0.01}
+      };
+      float initial_sensor_noise[1][6] = {
+        {0.07, 0.07, 0.07, 0.05, 0.05, 0.05}
+      };
+      _copyMatrixWidthC(state_estimate_k_minus_1, initial_state_estimate, 1);
+      _copyMatrixWidthC(P_k_minus_1, initial_P_k, 6);
+      _identityMatrixCbyC(A_k_minus_1);
+      _copyMatrixWidthC(process_noise_v_k_minus_1, intial_process_noise, 1);
+      _copyMatrixWidthC(Q_k, initial_Q_k, 6);
+      if (power < 150) {
+        float initial_R_k[6][6] = {
+        {0.01, 0.0, 0.0, 0.0, 0.0, 0.0},
+        {0.0, 0.01, 0.0, 0.0, 0.0, 0.0},
+        {0.0, 0.0, 0.01, 0.0, 0.0, 0.0},
+        {0.0, 0.0, 0.0, 0.01, 0.0, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 0.01, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 0.0, 0.05}
+        };
+        _copyMatrixWidthC(R_k, initial_R_k, 6);
+      } else if (power < 750) {
+        float initial_R_k[6][6] = {
         {1.0, 0.0, 0.0, 0.0, 0.0, 0.0},
         {0.0, 1.0, 0.0, 0.0, 0.0, 0.0},
         {0.0, 0.0, 1.0, 0.0, 0.0, 0.0},
@@ -152,26 +184,20 @@ void init_ekf(
         {0.0, 0.0, 0.0, 0.0, 1.0, 0.0},
         {0.0, 0.0, 0.0, 0.0, 0.0, 0.2}
         };
-      if (power != 512) {
-        printf("For motorPower at 512, initial_R_k in written. For other values it is not.\n");
-        printf("Fuck.\n");
-        printf("Check kalman.py for reference.\n");
-        exit(1);
+        _copyMatrixWidthC(R_k, initial_R_k, 6);
+      } else {
+        float initial_R_k[6][6] = {
+        {5.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+        {0.0, 5.0, 0.0, 0.0, 0.0, 0.0},
+        {0.0, 0.0, 5.0, 0.0, 0.0, 0.0},
+        {0.0, 0.0, 0.0, 5.0, 0.0, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 5.0, 0.0},
+        {0.0, 0.0, 0.0, 0.0, 0.0, 0.7}
+        };
+        _copyMatrixWidthC(R_k, initial_R_k, 6);
       }
-      float intial_process_noise[1][6] = {
-        {0.1, 0.1, 0.1, 0.01, 0.01, 0.01}
-      };
-      float initial_sensor_noise[1][6] = {
-        {0.07, 0.07, 0.07, 0.05, 0.05, 0.05}
-      };
-      copy_matrix(state_estimate_k_minus_1, initial_state_estimate, 1);
-      copy_matrix(P_k_minus_1, initial_P_k, 6);
-      identity_matrix(A_k_minus_1);
-      copy_matrix(process_noise_v_k_minus_1, intial_process_noise, 1);
-      copy_matrix(Q_k, initial_Q_k, 6);
-      copy_matrix(R_k, initial_R_k, 6);
-      identity_matrix(H_k);
-      copy_matrix(sensor_noise_w_k, initial_sensor_noise, 1);
+      _identityMatrixCbyC(H_k);
+      _copyMatrixWidthC(sensor_noise_w_k, initial_sensor_noise, 1);
 
     }
 
@@ -197,45 +223,54 @@ void extendedKalmanFilter(
 
       //######### Predict #########
       // Predict the state estimate
-      addMat(tmpMat6x1, state_estimate_k_minus_1, process_noise_v_k_minus_1, 1);
-      multMat(state_estimate_k, A_k_minus_1, tmpMat6x1, 1);
+      _addMatrixWidthC(tmpMat6x1, state_estimate_k_minus_1, process_noise_v_k_minus_1, 1);
+      _multMatrixWidthC(state_estimate_k, A_k_minus_1, tmpMat6x1, 1);
       // Predict the state covariance estimate
-      multMat(tmpMat6x6, A_k_minus_1, P_k_minus_1, 6);
-      transpose(tmpMat2_6x6, A_k_minus_1);
-      multMat(tmpMat3_6x6, tmpMat6x6, tmpMat2_6x6, 6);
-      addMat(P_k, tmpMat3_6x6, Q_k, 6);
+      _multMatrixWidthC(tmpMat6x6, A_k_minus_1, P_k_minus_1, 6);
+      _transposeMatrixCbyC(tmpMat2_6x6, A_k_minus_1);
+      _multMatrixWidthC(tmpMat3_6x6, tmpMat6x6, tmpMat2_6x6, 6);
+      _addMatrixWidthC(P_k, tmpMat3_6x6, Q_k, 6);
 
       //######### Correct #########
       // Calculate the difference between the measurements and prediction
       float measurement_residual_y_k[1][6];
-      multMat(tmpMat6x1, H_k, state_estimate_k, 1);
-      addMat(tmpMat2_6x1, tmpMat6x1, sensor_noise_w_k, 1);
-      subtractMat(measurement_residual_y_k, z_k_observation_vector, tmpMat2_6x1, 1);
+      _multMatrixWidthC(tmpMat6x1, H_k, state_estimate_k, 1);
+      _addMatrixWidthC(tmpMat2_6x1, tmpMat6x1, sensor_noise_w_k, 1);
+      _subtractMatrixWidthC(measurement_residual_y_k, z_k_observation_vector, tmpMat2_6x1, 1);
       // Calculate the measurement residual covariance
       float S_k[6][6];
-      multMat(tmpMat6x6, H_k, P_k, 6);
-      transpose(tmpMat2_6x6, H_k);
-      multMat(tmpMat3_6x6, tmpMat6x6, tmpMat2_6x6, 6);
-      addMat(S_k, tmpMat3_6x6, R_k, 6);         //S_k = H_k @ P_k @ H_k.T + R_k
+      _multMatrixWidthC(tmpMat6x6, H_k, P_k, 6);
+      _transposeMatrixCbyC(tmpMat2_6x6, H_k);
+      _multMatrixWidthC(tmpMat3_6x6, tmpMat6x6, tmpMat2_6x6, 6);
+      _addMatrixWidthC(S_k, tmpMat3_6x6, R_k, 6);         //S_k = H_k @ P_k @ H_k.T + R_k
       // Calculate the near-optimal Kalman gain
       float K_k[6][6];
-      multMat(tmpMat6x6, P_k, tmpMat2_6x6, 6);  //P_k @ H_k.T
-      pseudo_inverse(tmpMat2_6x6, S_k);         //np.linalg.pinv(S_k)
-      multMat(K_k, tmpMat6x6, tmpMat2_6x6, 6);  //K_k = P_k @ H_k.T @ np.linalg.pinv(S_k)
+      _multMatrixWidthC(tmpMat6x6, P_k, tmpMat2_6x6, 6);  //P_k @ H_k.T
+      _pseudoInverseMatrixCbyC(tmpMat2_6x6, S_k);         //np.linalg.pinv(S_k)
+      _multMatrixWidthC(K_k, tmpMat6x6, tmpMat2_6x6, 6);  //K_k = P_k @ H_k.T @ np.linalg.pinv(S_k)
       // Calculate an updated state estimate for time k
-      multMat(tmpMat2_6x1, K_k, measurement_residual_y_k, 1);
-      addMat(state_estimate_k, state_estimate_k, tmpMat2_6x1, 1);
+      _multMatrixWidthC(tmpMat2_6x1, K_k, measurement_residual_y_k, 1);
+      _addMatrixWidthC(state_estimate_k, state_estimate_k, tmpMat2_6x1, 1);
       // Update the state covariance estimate for time k
-      multMat(tmpMat6x6, K_k, H_k, 6);
-      multMat(tmpMat2_6x6, tmpMat6x6, P_k, 6);
-      subtractMat(P_k, P_k, tmpMat2_6x6, 6);
+      _multMatrixWidthC(tmpMat6x6, K_k, H_k, 6);
+      _multMatrixWidthC(tmpMat2_6x6, tmpMat6x6, P_k, 6);
+      _subtractMatrixWidthC(P_k, P_k, tmpMat2_6x6, 6);
     }
 
-void calibrate_pogobot(int power, int* leftMotorVal, int* rightMotorVal) {
+
+
+
+
+void pogobot_quick_calibrate(int power, int duration, int* leftMotorVal, int* rightMotorVal) {
+
+}
+
+
+void pogobot_calibrate(int power, int startup_duration, int try_duration, int number_of_tries, int* leftMotorVal, int* rightMotorVal) {
     float acc[3];
     float gyro[3];
 
-    // kalman arguments
+    // kalman arguments 
     float obs_vector_z_k[1][6];
     float state_estimate_k_minus_1[1][6];
     float P_k_minus_1[6][6];
@@ -245,8 +280,8 @@ void calibrate_pogobot(int power, int* leftMotorVal, int* rightMotorVal) {
     float R_k[6][6];
     float H_k[6][6];
     float sensor_noise_w_k[1][6];
-    init_ekf(
-        512,
+    initExtendedKalmanFilter(
+        power,
         state_estimate_k_minus_1,       // [1][6] 
         P_k_minus_1,                    // [6][6] 
         A_k_minus_1,                    // [6][6] 
@@ -260,7 +295,7 @@ void calibrate_pogobot(int power, int* leftMotorVal, int* rightMotorVal) {
     float state_estimate_k[1][6];
     float P_k[6][6];
 
-    int powerLeft  = power + 200;
+    int powerLeft  = power;
     int powerRight = power;
 
     pogobot_motor_set(motorL, powerLeft);
@@ -284,15 +319,23 @@ void calibrate_pogobot(int power, int* leftMotorVal, int* rightMotorVal) {
             state_estimate_k,               // [1][6] 
             P_k                             // [6][6] 
         );
-        copy_matrix(P_k_minus_1, P_k, 6);
-        copy_matrix(state_estimate_k_minus_1, state_estimate_k, 1);
+        _copyMatrixWidthC(P_k_minus_1, P_k, 6);
+        _copyMatrixWidthC(state_estimate_k_minus_1, state_estimate_k, 1);        
         //print_kalman(i, state_estimate_k, acc, gyro);
 
         // CORRECT MOTOR VALUES
         float gyro_z = state_estimate_k[0][5];
+        printf("motorLeft=%d ; gyroscope=", powerLeft);
+        print_float(gyro_z, 1000);
+        printf("\n");
         if ((gyro_z > 0.2f) || (gyro_z < -0.2f)) {
-          powerLeft -= (int)(gyro_z * 7.5f);
+          powerLeft += (int)(gyro_z * 7.5f);
         }
+        /*if (powerLeft > 1023) {
+          powerLeft = 0;
+        } else if (powerLeft <= 0) {
+          powerLeft = 1023;
+        }*/
         pogobot_motor_set(motorL, powerLeft);
         pogobot_motor_set(motorR, powerRight); 
     }
