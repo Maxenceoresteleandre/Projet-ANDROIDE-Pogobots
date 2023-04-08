@@ -81,7 +81,7 @@ void print_kalman(int i, float state_estimate_k[][6], float acc[], float gyro[3]
 void pogobot_calibrate(int power, int startup_duration, int try_duration, int number_of_tries, int* leftMotorVal, int* rightMotorVal);
 
 // calibrate with fewer parameters, duration in milliseconds
-void pogobot_quick_calibrate(int power, int duration, int* leftMotorVal, int* rightMotorVal);
+void pogobot_quick_calibrate(int power, int* leftMotorVal, int* rightMotorVal);
 
 // code for the extended Kalman Filter algorithm 
 // reproduction from the kalman.py file

@@ -201,6 +201,12 @@ void initExtendedKalmanFilter(
 
     }
 
+/*
+# adapted from:
+# Author: Addison Sears-Collins
+# https://automaticaddison.com
+# Description: Extended Kalman Filter example (two-wheeled mobile robot)
+*/
 void extendedKalmanFilter(
     float z_k_observation_vector[][C],         // [1][6] 6x1
     float state_estimate_k_minus_1[][C],       // [1][6] 6x1
@@ -261,11 +267,12 @@ void extendedKalmanFilter(
 
 
 
-void pogobot_quick_calibrate(int power, int duration, int* leftMotorVal, int* rightMotorVal) {
-
+void pogobot_quick_calibrate(int power, int* leftMotorVal, int* rightMotorVal) {
+  pogobot_calibrate(power, 750, 1250, 10, leftMotorVal, rightMotorVal);
 }
 
 
+#define RESULTS_SAVED 4
 void pogobot_calibrate(int power, int startup_duration, int try_duration, int number_of_tries, int* leftMotorVal, int* rightMotorVal) {
     float acc[3];
     float gyro[3];
@@ -280,7 +287,13 @@ void pogobot_calibrate(int power, int startup_duration, int try_duration, int nu
     float R_k[6][6];
     float H_k[6][6];
     float sensor_noise_w_k[1][6];
-    initExtendedKalmanFilter(
+
+    // final results
+    int powerLeft  = power;
+    int powerRight = power;
+
+    for (int i=0; i<number_of_tries; i++) {
+      initExtendedKalmanFilter(
         power,
         state_estimate_k_minus_1,       // [1][6] 
         P_k_minus_1,                    // [6][6] 
@@ -290,58 +303,58 @@ void pogobot_calibrate(int power, int startup_duration, int try_duration, int nu
         R_k,                            // [6][6] 
         H_k,                            // [6][6] 
         sensor_noise_w_k                // [1][6] 
-    );
-    // kalman results
-    float state_estimate_k[1][6];
-    float P_k[6][6];
+      );
+      // kalman results
+      float state_estimate_k[1][6];
+      float P_k[6][6];
+      float last_kalman_results[RESULTS_SAVED];
+      int result_index = 0;
 
-    int powerLeft  = power;
-    int powerRight = power;
+      // STARTUP
+      pogobot_motor_set(motorL, powerLeft);
+      pogobot_motor_set(motorR, powerRight);
+      msleep(startup_duration);
 
-    pogobot_motor_set(motorL, powerLeft);
-    pogobot_motor_set(motorR, powerRight);
+      // MOVE, COLLECT DATA AND APPLY KALMAN
+      time_reference_t timer;
+      pogobot_stopwatch_reset(&timer);
+      while (pogobot_stopwatch_get_elapsed_microseconds(&timer)*1000 < try_duration) {
+          pogobot_imu_read(acc, gyro);
+          combine_arrays(*obs_vector_z_k, acc, gyro, 3, 3);
+          extendedKalmanFilter(
+              obs_vector_z_k,                 // [1][6]
+              state_estimate_k_minus_1,       // [1][6]
+              P_k_minus_1,                    // [6][6]
+              A_k_minus_1,                    // [6][6] 
+              process_noise_v_k_minus_1,      // [1][6] 
+              Q_k,                            // [6][6] 
+              R_k,                            // [6][6] 
+              H_k,                            // [6][6] 
+              sensor_noise_w_k,               // [1][6] 
+              // returns:
+              state_estimate_k,               // [1][6] 
+              P_k                             // [6][6] 
+          );
+          _copyMatrixWidthC(P_k_minus_1, P_k, 6);
+          _copyMatrixWidthC(state_estimate_k_minus_1, state_estimate_k, 1);
+          //print_kalman(pogobot_stopwatch_get_elapsed_microseconds(&timer)*1000, state_estimate_k, acc, gyro);
+          last_kalman_results[result_index] = state_estimate_k[0][5];
+          result_index += 1;
+          if (result_index >= RESULTS_SAVED) result_index = 0; // use the RESULTS_SAVED last results for calibration
+      }
 
-    
-    for (int i=0; i<CALIBRATION_DURATION; i++) {
-        pogobot_imu_read(acc, gyro);
-        combine_arrays(*obs_vector_z_k, acc, gyro, 3, 3);
-        extendedKalmanFilter(
-            obs_vector_z_k,                 // [1][6]
-            state_estimate_k_minus_1,       // [1][6]
-            P_k_minus_1,                    // [6][6]
-            A_k_minus_1,                    // [6][6] 
-            process_noise_v_k_minus_1,      // [1][6] 
-            Q_k,                            // [6][6] 
-            R_k,                            // [6][6] 
-            H_k,                            // [6][6] 
-            sensor_noise_w_k,               // [1][6] 
-            // returns:
-            state_estimate_k,               // [1][6] 
-            P_k                             // [6][6] 
-        );
-        _copyMatrixWidthC(P_k_minus_1, P_k, 6);
-        _copyMatrixWidthC(state_estimate_k_minus_1, state_estimate_k, 1);        
-        //print_kalman(i, state_estimate_k, acc, gyro);
-
-        // CORRECT MOTOR VALUES
-        float gyro_z = state_estimate_k[0][5];
-        printf("motorLeft=%d ; gyroscope=", powerLeft);
-        print_float(gyro_z, 1000);
-        printf("\n");
-        if ((gyro_z > 0.2f) || (gyro_z < -0.2f)) {
-          powerLeft += (int)(gyro_z * 7.5f);
-        }
-        /*if (powerLeft > 1023) {
-          powerLeft = 0;
-        } else if (powerLeft <= 0) {
-          powerLeft = 1023;
-        }*/
-        pogobot_motor_set(motorL, powerLeft);
-        pogobot_motor_set(motorR, powerRight); 
+      // CORRECT MOTOR VALUES
+      pogobot_motor_set(motorL, motorStop);
+      pogobot_motor_set(motorR, motorStop);
+      float gyro_z = 0.0f;
+      for (int j=0; j<RESULTS_SAVED; j++) gyro_z += last_kalman_results[j] / (float)RESULTS_SAVED;
+      printf("motorLeft=%d ; gyroscope=", powerLeft);
+      print_float(gyro_z, 1000);
+      printf("\n");
+      powerLeft += (int)(gyro_z * 7.5f);  // éventuellement ajouter un test de gradient si cette version
+                                          // marche 1 fois sur 2 (pour voir si on fait += ou -=)
+      msleep(500);    // pour que le pogo revienne à l'arrêt
     }
-    pogobot_motor_set(motorL, motorStop);
-    pogobot_motor_set(motorR, motorStop);
-
 
     printf("Calibration complete:\n\tLeft: %d\n\tRight: %d\n", powerLeft, powerRight);
     *leftMotorVal  = powerLeft;
@@ -370,3 +383,6 @@ void print_kalman(int i, float state_estimate_k[][6], float acc[], float gyro[3]
         print_f_list(gyroNew, 3, 100);
         printf(")\n\n");
 }
+
+
+
