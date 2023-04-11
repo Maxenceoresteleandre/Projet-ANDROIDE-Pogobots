@@ -1,11 +1,14 @@
 
 
-#define CALIBRATION_DURATION 175
 
+// CORRECTION is the amount of correction done at each step of the calibration
+// if your Pogo is mounted backwards, give it a negative value
+#define CORRECTION 50.0f
+#define GRAVITY 9.81
 
+// don't touch these
 #define C 6
 #define PSEUDO_INVERSE_MAX_ITER 30
-#define GRAVITY 9.81
 
 // multiply two matrices
 // mat1 : 6x6 or 1x6 (rows x colums)
@@ -16,7 +19,7 @@ void _multMatrixWidthC(
     float mat2[][C], 
     int r1);            // number of rows of the first matrix (1 or 6)
 
-// adds two matrices
+// add two matrices
 // must have the same size (or runtime error)
 void _addMatrixWidthC(
     float matRes[][C], 
@@ -24,7 +27,7 @@ void _addMatrixWidthC(
     float mat2[][C], 
     int r);
 
-// subtracts mat2 from mat1 (matRes = mat1 - mat2)
+// subtract mat2 from mat1 (matRes = mat1 - mat2)
 // must have the same size (or runtime error)
 void _subtractMatrixWidthC(
     float matRes[][C], 
@@ -53,14 +56,6 @@ void _copyMatrixWidthC(float matRes[][C], float mat[][C], int r);
 
 
 
-
-
-
-
-
-
-
-
 // combine arr1[len1] and arr2[len2] into res[len1+len2] (res = arr1 + arr2 in python)
 void combine_arrays(float res[], float arr1[], float arr2[], int len1, int len2);
 
@@ -69,7 +64,6 @@ void split_array(float base[], float arr1[], float arr2[], int len1, int len2);
 
 // prints to the console the IMU values with and without the Kalman filter
 void print_kalman(int i, float state_estimate_k[][6], float acc[], float gyro[3]);
-
 
 
 

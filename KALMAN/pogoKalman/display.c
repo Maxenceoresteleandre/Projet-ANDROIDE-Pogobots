@@ -54,7 +54,11 @@ void print_float(float i, int precision) {
     dec = -1 * dec;
   }
   char buffer[10];
-  sprintf(buffer, "%d.%d", (int)i, dec);
+  if (i<0.0f && i>-1.0f) {
+    sprintf(buffer, "-%d.%d", (int)i, dec);
+  } else {
+    sprintf(buffer, "%d.%d", (int)i, dec);
+  }
   printf("%8s", buffer);
 }
 

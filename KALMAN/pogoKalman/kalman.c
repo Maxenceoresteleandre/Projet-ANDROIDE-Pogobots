@@ -268,11 +268,11 @@ void extendedKalmanFilter(
 
 
 void pogobot_quick_calibrate(int power, int* leftMotorVal, int* rightMotorVal) {
-  pogobot_calibrate(power, 750, 1250, 10, leftMotorVal, rightMotorVal);
+  pogobot_calibrate(power, 500, 750, 15, leftMotorVal, rightMotorVal);
 }
 
 
-#define RESULTS_SAVED 4
+//#define RESULTS_SAVED 4
 void pogobot_calibrate(int power, int startup_duration, int try_duration, int number_of_tries, int* leftMotorVal, int* rightMotorVal) {
     float acc[3];
     float gyro[3];
@@ -307,18 +307,20 @@ void pogobot_calibrate(int power, int startup_duration, int try_duration, int nu
       // kalman results
       float state_estimate_k[1][6];
       float P_k[6][6];
-      float last_kalman_results[RESULTS_SAVED];
-      int result_index = 0;
+      //float last_kalman_results[RESULTS_SAVED];
+      //int result_index = 0;
 
       // STARTUP
       pogobot_motor_set(motorL, powerLeft);
       pogobot_motor_set(motorR, powerRight);
       msleep(startup_duration);
+      printf("\nmotorLeft=%d ; motorRight=%d\n", powerLeft, powerRight);
+
 
       // MOVE, COLLECT DATA AND APPLY KALMAN
       time_reference_t timer;
       pogobot_stopwatch_reset(&timer);
-      while (pogobot_stopwatch_get_elapsed_microseconds(&timer)*1000 < try_duration) {
+      while (pogobot_stopwatch_get_elapsed_microseconds(&timer) / 1000 < try_duration) {
           pogobot_imu_read(acc, gyro);
           combine_arrays(*obs_vector_z_k, acc, gyro, 3, 3);
           extendedKalmanFilter(
@@ -337,23 +339,20 @@ void pogobot_calibrate(int power, int startup_duration, int try_duration, int nu
           );
           _copyMatrixWidthC(P_k_minus_1, P_k, 6);
           _copyMatrixWidthC(state_estimate_k_minus_1, state_estimate_k, 1);
-          //print_kalman(pogobot_stopwatch_get_elapsed_microseconds(&timer)*1000, state_estimate_k, acc, gyro);
-          last_kalman_results[result_index] = state_estimate_k[0][5];
-          result_index += 1;
-          if (result_index >= RESULTS_SAVED) result_index = 0; // use the RESULTS_SAVED last results for calibration
+          // for debug the next line is reaaaally great
+          //print_kalman(pogobot_stopwatch_get_elapsed_microseconds(&timer)/1000, state_estimate_k, acc, gyro);
       }
 
       // CORRECT MOTOR VALUES
       pogobot_motor_set(motorL, motorStop);
       pogobot_motor_set(motorR, motorStop);
-      float gyro_z = 0.0f;
-      for (int j=0; j<RESULTS_SAVED; j++) gyro_z += last_kalman_results[j] / (float)RESULTS_SAVED;
-      printf("motorLeft=%d ; gyroscope=", powerLeft);
+      float gyro_z = state_estimate_k[0][5];
+      printf("\tgyroscope = ");
       print_float(gyro_z, 1000);
       printf("\n");
-      powerLeft += (int)(gyro_z * 7.5f);  // éventuellement ajouter un test de gradient si cette version
+      powerLeft -= (int)(gyro_z * CORRECTION);  // éventuellement ajouter un test de gradient si cette version
                                           // marche 1 fois sur 2 (pour voir si on fait += ou -=)
-      msleep(500);    // pour que le pogo revienne à l'arrêt
+      msleep(250);    // pour que le pogo revienne à l'arrêt
     }
 
     printf("Calibration complete:\n\tLeft: %d\n\tRight: %d\n", powerLeft, powerRight);
@@ -367,7 +366,7 @@ void print_kalman(int i, float state_estimate_k[][6], float acc[], float gyro[3]
         float accNew[3];
         float gyroNew[3];
         split_array(*state_estimate_k, accNew, gyroNew, 3, 3);
-        printf("---------------- Avant filtre[%d] ----------------\n", i);
+        printf("----------------  Sans filtre[%d ms]  ----------------\n", i);
         printf("Acc = (");
         print_f_list(acc, 3, 100);
         printf(")\n");
@@ -375,7 +374,7 @@ void print_kalman(int i, float state_estimate_k[][6], float acc[], float gyro[3]
         print_f_list(gyro, 3, 100);
         printf(")\n");
 
-        printf("---------------- Après [%d] ----------------\n", i);
+        printf("---------------- Avec filtre [%d ms]  ----------------\n", i);
         printf("Acc = (");
         print_f_list(accNew, 3, 100);
         printf(")\n");
