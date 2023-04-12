@@ -70,7 +70,7 @@ void initExtendedKalmanFilter(
 
 ## Debug, display and convenience functions
 
->Useful functions, linked to the calibration of the pogobots or with a more general purpose.
+Useful functions, linked to the calibration of the pogobots or with a more general purpose.
 
 **Functions:**
 
