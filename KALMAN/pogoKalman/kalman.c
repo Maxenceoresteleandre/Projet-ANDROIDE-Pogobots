@@ -268,12 +268,12 @@ void extendedKalmanFilter(
 
 
 void pogobot_quick_calibrate(int power, int* leftMotorVal, int* rightMotorVal) {
-  pogobot_calibrate(power, 500, 750, 15, leftMotorVal, rightMotorVal);
+  pogobot_calibrate(power, 500, 750, 15, 50.0f, leftMotorVal, rightMotorVal);
 }
 
 
 //#define RESULTS_SAVED 4
-void pogobot_calibrate(int power, int startup_duration, int try_duration, int number_of_tries, int* leftMotorVal, int* rightMotorVal) {
+void pogobot_calibrate(int power, int startup_duration, int try_duration, int number_of_tries, float correction, int* leftMotorVal, int* rightMotorVal) {
     float acc[3];
     float gyro[3];
 

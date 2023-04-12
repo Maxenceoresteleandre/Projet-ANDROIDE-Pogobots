@@ -1,12 +1,8 @@
 
 
 
-// CORRECTION is the amount of correction done at each step of the calibration
-// if your Pogo is mounted backwards, give it a negative value
-#define CORRECTION 50.0f
-#define GRAVITY 9.81
-
 // don't touch these
+#define GRAVITY 9.81
 #define C 6
 #define PSEUDO_INVERSE_MAX_ITER 30
 
@@ -71,8 +67,18 @@ void print_kalman(int i, float state_estimate_k[][6], float acc[], float gyro[3]
 
 
 
-// calibrate the pogobot's motor values with the Kalman filter; durations in milliseconds
-void pogobot_calibrate(int power, int startup_duration, int try_duration, int number_of_tries, int* leftMotorVal, int* rightMotorVal);
+/*
+calibrate the pogobot's motor values with the Kalman filter; durations in milliseconds
+    - power: average power that will be applied to the motors
+    - startup_duration: in each try, amount of time during which no IMU value is calculated (better calibration)
+    - try_duration: amount of time during which IMU values are calculated in each try
+    - number_of_tries: number of tries, in each try we check the imu values after some time and correct the motors accordingly
+    - correction: amount of correction applied to the motor at each iteration 
+            (50.0f by default, needs a negative value if your pogo is built backwards) 
+    - leftMotorVal: pointer to save the data of the left motor power
+    - rightMotorValue: pointer to save the data of the right motor power
+*/
+void pogobot_calibrate(int power, int startup_duration, int try_duration, int number_of_tries, float correction, int* leftMotorVal, int* rightMotorVal);
 
 // calibrate with fewer parameters, duration in milliseconds
 void pogobot_quick_calibrate(int power, int* leftMotorVal, int* rightMotorVal);
