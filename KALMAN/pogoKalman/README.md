@@ -1,5 +1,5 @@
 
-# [Projet P-ANDROIDE - M1/S2 - 2023](http://androide.lip6.fr/?q=node/674)
+# [Projet P-ANDROIDE - M1/S2 - 2023 - Partie calibration et filtre de Kalman](http://androide.lip6.fr/?q=node/674)
 
 
 
