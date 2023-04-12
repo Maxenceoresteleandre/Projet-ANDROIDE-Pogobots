@@ -11,13 +11,13 @@ int main(int argc, char* argv[]) {
     int leftMotorVal;
     int rightMotorVal;
 
-    pogobot_quick_calibrate(716, &leftMotorVal, &rightMotorVal);
+    pogobot_quick_calibrate(700, &leftMotorVal, &rightMotorVal);
 
     //("\n\nCalibrated motor values:\n\tLeft: %d\n\tRight: %d\n", leftMotorVal, rightMotorVal);
     anim_same();
 
-    pogobot_motor_set(motorL, leftMotorVal);
-    pogobot_motor_set(motorR, rightMotorVal); 
+    pogobot_motor_jump_set(motorL, leftMotorVal);
+    pogobot_motor_jump_set(motorR, rightMotorVal); 
 
     anim_same();
     

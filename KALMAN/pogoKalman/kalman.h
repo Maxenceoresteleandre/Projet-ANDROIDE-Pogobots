@@ -83,6 +83,9 @@ void pogobot_calibrate(int power, int startup_duration, int try_duration, int nu
 // calibrate with fewer parameters, duration in milliseconds
 void pogobot_quick_calibrate(int power, int* leftMotorVal, int* rightMotorVal);
 
+// safely initiate motor value (jumpstart if value is under 512)
+void pogobot_motor_jump_set(int power, int motor);
+
 // code for the extended Kalman Filter algorithm 
 // reproduction from the kalman.py file
 void extendedKalmanFilter(

@@ -271,6 +271,16 @@ void pogobot_quick_calibrate(int power, int* leftMotorVal, int* rightMotorVal) {
   pogobot_calibrate(power, 500, 750, 15, 50.0f, leftMotorVal, rightMotorVal);
 }
 
+void pogobot_motor_jump_set(int power, int motor) {
+  if (power > 512) {
+    pogobot_motor_set(power, motor);
+  } else {
+    pogobot_motor_set(512, motor);
+    msleep(50);
+    pogobot_motor_set(power, motor);
+  }
+}
+
 
 //#define RESULTS_SAVED 4
 void pogobot_calibrate(int power, int startup_duration, int try_duration, int number_of_tries, float correction, int* leftMotorVal, int* rightMotorVal) {
@@ -311,8 +321,8 @@ void pogobot_calibrate(int power, int startup_duration, int try_duration, int nu
       //int result_index = 0;
 
       // STARTUP
-      pogobot_motor_set(motorL, powerLeft);
-      pogobot_motor_set(motorR, powerRight);
+      pogobot_motor_jump_set(motorL, powerLeft);
+      pogobot_motor_jump_set(motorR, powerRight);
       msleep(startup_duration);
       printf("\nmotorLeft=%d ; motorRight=%d\n", powerLeft, powerRight);
 
@@ -347,15 +357,21 @@ void pogobot_calibrate(int power, int startup_duration, int try_duration, int nu
       pogobot_motor_set(motorL, motorStop);
       pogobot_motor_set(motorR, motorStop);
       float gyro_z = state_estimate_k[0][5];
-      printf("\tgyroscope = ");
-      print_float(gyro_z, 1000);
-      printf("\n");
-      powerLeft -= (int)(gyro_z * CORRECTION);  // éventuellement ajouter un test de gradient si cette version
-                                          // marche 1 fois sur 2 (pour voir si on fait += ou -=)
+      //printf("\tgyroscope = ");
+      //print_float(gyro_z, 1000);
+      //printf("\n");
+      int c = (int)(gyro_z * correction);
+      if (powerLeft-c > 1023 || powerLeft-c < 0) {
+        powerRight += c;
+      } else {
+        powerLeft -= c;
+      }
       msleep(250);    // pour que le pogo revienne à l'arrêt
     }
 
-    printf("Calibration complete:\n\tLeft: %d\n\tRight: %d\n", powerLeft, powerRight);
+    //printf("Calibration complete:\n\tLeft: %d\n\tRight: %d\n", powerLeft, powerRight);
+    if (powerRight > 1023) powerRight = 1023;
+    if (powerRight < 0) powerRight = 0;
     *leftMotorVal  = powerLeft;
     *rightMotorVal = powerRight;
     return;
