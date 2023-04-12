@@ -12,9 +12,7 @@ int main(int argc, char* argv[]) {
     int rightMotorVal;
 
     pogobot_quick_calibrate(700, &leftMotorVal, &rightMotorVal);
-
-    //("\n\nCalibrated motor values:\n\tLeft: %d\n\tRight: %d\n", leftMotorVal, rightMotorVal);
-    anim_same();
+    printf("Calibration ok : powerLeft = %d ; powerRight = %d\n", leftMotorVal, rightMotorVal);
 
     pogobot_motor_jump_set(motorL, leftMotorVal);
     pogobot_motor_jump_set(motorR, rightMotorVal); 
