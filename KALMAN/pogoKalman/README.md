@@ -5,7 +5,7 @@
 
 ## Pogobot Calibration 
 
-Functions used to calibrate the Pogobot: find the correct motor values (between 0 and 1023) which make the robot move forward without turning. Keep in mind that Pogobots are very sensitive to environmental perturbations. Dust, an uneven ground and older toothbrushes can affect the trajectory of a robot.__
+Functions used to calibrate the Pogobot: find the correct motor values (between 0 and 1023) which make the robot move forward without turning. Keep in mind that Pogobots are very sensitive to environmental perturbations. Dust, an uneven ground and older toothbrushes can affect the trajectory of a robot.<br />
 To calibrate the robot, we turn on the motor for a short time, check if the robot turned left or right, ajust the values of the motors accordingly and repeat a few times.
 
 **Functions:**
@@ -13,15 +13,15 @@ To calibrate the robot, we turn on the motor for a short time, check if the robo
 ```C
 void pogobot_quick_calibrate(int power, int* leftMotorVal, int* rightMotorVal);
 ```
->Call this function to calibrate the motors of the Pogobot at roughly ***power***. The value of ***power*** has to be between 0 and 1023. However, the lower the value, the less precise the calibration will be. Keeping ***power*** between 524 and 716 is a good idea.__
+>Call this function to calibrate the motors of the Pogobot at roughly ***power***. The value of ***power*** has to be between 0 and 1023. However, the lower the value, the less precise the calibration will be. Keeping ***power*** between 524 and 716 is a good idea.<br />
 >The values are returned as integers through ***leftMotorVal*** and ***rightMotorVal***.
 
 ```C
 void pogobot_calibrate(int power, int startup_duration, int try_duration, int number_of_tries, float correction, int* leftMotorVal, int* rightMotorVal);
 ```
->Same function as before, but gives more control to the user over its parameters.__
->Call this function to calibrate the motors of the Pogobot at roughly ***power***. During each try, the motors are turned on for ***startup_duration***ms before we actually collect IMU data. Then IMU data is collected during ***try_duration***ms. The experience is repeated ***number_of_tries*** times. Each time, robot_rotation****correction*** is applied to one of the motors. __
->In ***pogo_quick_calibrate()***, ***startup_duration*** = 500 ; ***try_duration*** = 750 ; ***number_of_tries*** = 15 and ***correction*** = 50.0f.__
+>Same function as before, but gives more control to the user over its parameters.<br />
+>Call this function to calibrate the motors of the Pogobot at roughly ***power***. During each try, the motors are turned on for ***startup_duration***ms before we actually collect IMU data. Then IMU data is collected during ***try_duration***ms. The experience is repeated ***number_of_tries*** times. Each time, robot_rotation****correction*** is applied to one of the motors. <br />
+>In ***pogo_quick_calibrate()***, ***startup_duration*** = 500 ; ***try_duration*** = 750 ; ***number_of_tries*** = 15 and ***correction*** = 50.0f.<br />
 >Be careful, if your pogobot is mounted backward, you might need to assign a negative value to ***correction***. 
 
 
@@ -48,7 +48,7 @@ void extendedKalmanFilter(
     float P_k[][C]                            // [6][6] 6x6
     );
 ```
->Function to filter out noisy data (makes a prediction from the previous iteration then correct it with the new data). z_k_observation_vector should be the data read by the IMU : {acc[0], acc[1], acc[2], gyro[0], gyro[1], gyro[2]}. __
+>Function to filter out noisy data (makes a prediction from the previous iteration then correct it with the new data). z_k_observation_vector should be the data read by the IMU : {acc[0], acc[1], acc[2], gyro[0], gyro[1], gyro[2]}. <br />
 >The results are stored in state_estimate_k and P_k. At the next iteration, you should assign their values to P_k_minus_1 and state_estimate_k_minus_1. The other parameters don't need to be changed (initialize once then forget about them).
 
 ```C
@@ -77,8 +77,8 @@ Useful functions, linked to the calibration of the pogobots or with a more gener
 ```C
 void print_float(float i, int precision);
 ```
->Print a float to the console, because printf("%f", myFloat); doesn't work on pogobots. They're too cool for that.__
->Example: printf("one point two = "); print_float(1.22f, 10); printf("\n"); __
+>Print a float to the console, because printf("%f", myFloat); doesn't work on pogobots. They're too cool for that.<br />
+>Example: printf("one point two = "); print_float(1.22f, 10); printf("\n"); <br />
 >Result: "one point two = 1.2\n"
 
 ```C
