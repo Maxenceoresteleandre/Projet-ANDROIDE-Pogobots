@@ -26,7 +26,7 @@ Be careful, if your pogobot is mounted backward, you might need to assign a nega
 
 
 
-## Kalman filter implementation in C: 
+## Kalman filter implementation in C
 
 The Kalman filter is executable at runtime. It is used to reduce the noise from the IMU. In particular, the z axis of the gyroscope (horizontal rotation) can be used to determine if the pogobot is turning. It is used in pogobot_calibrate() but can be used elsewhere.
 
@@ -68,7 +68,7 @@ Declare arrays and pass them as arguments of this function to initialize them, a
 
 
 
-## Debug, display and convenience functions:
+## Debug, display and convenience functions
 
 Useful functions, linked to the calibration of the pogobots or with a more general purpose.
 
