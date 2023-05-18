@@ -6,7 +6,12 @@
  * Please refer to file LICENCE for details.
 **/
 
-/* Border detection (Pogobots change color (Blue) if they don't have neighbors on at least one side). */
+/* 
+Border detection (Pogobots change color (Blue) if they have neighbors on all sides).
+Green - 3 sides
+Red - 2 sides
+Yellow - 1 side
+*/
 
 #include <stdio.h>
 #include <string.h>
