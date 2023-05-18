@@ -5,12 +5,14 @@
  * This file is licensed under the Expat License, sometimes known as the MIT License.
  * Please refer to file LICENCE for details.
 **/
-
+/**
+Sending messages in all directions, of size message_length_bytes-1 bytes, a string composed of 'a'.
+**/
 #include <stdio.h>
 #include <string.h>
 #include "pogobot.h"
 
-#define message_length_bytes 375
+#define message_length_bytes 385
 
 int main(void) {
     pogobot_init();
