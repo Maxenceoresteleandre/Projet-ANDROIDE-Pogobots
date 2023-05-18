@@ -20,7 +20,8 @@ void pogobot_quick_calibrate(int power, int* leftMotorVal, int* rightMotorVal);
 void pogobot_calibrate(int power, int startup_duration, int try_duration, int number_of_tries, float correction, int* leftMotorVal, int* rightMotorVal);
 ```
 >Same function as before, but gives more control to the user over its parameters.<br />
->Call this function to calibrate the motors of the Pogobot at roughly ***power***. During each try, the motors are turned on for ***startup_duration***ms before we actually collect IMU data. Then IMU data is collected during ***try_duration***ms. The experience is repeated ***number_of_tries*** times. Each time, robot_rotation****correction*** is applied to one of the motors. <br />
+>pogobot_calibrate(700, 500, 750, 9, 50.0f, &leftMotorVal, &rightMotorVal);<br />
+>Call this function to calibrate the motors of the Pogobot at roughly ***power***. During each try, the motors are turned on for ***startup_duration***ms before we actually collect IMU data. Then IMU data is collected during ***try_duration***ms. The experience is repeated ***number_of_tries*** times. Each time, robot_rotation****correction*** is applied to one of the motors.<br />
 >In ***pogo_quick_calibrate()***, ***startup_duration*** = 500 ; ***try_duration*** = 750 ; ***number_of_tries*** = 15 and ***correction*** = 50.0f.<br />
 >Be careful, if your pogobot is mounted backward, you might need to assign a negative value to ***correction***. 
 
