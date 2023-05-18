@@ -268,7 +268,7 @@ void extendedKalmanFilter(
 
 
 void pogobot_quick_calibrate(int power, int* leftMotorVal, int* rightMotorVal) {
-  pogobot_calibrate(power, 500, 750, 15, 50.0f, leftMotorVal, rightMotorVal);
+  pogobot_calibrate(power, 500, 750, 9, 50.0f, leftMotorVal, rightMotorVal);
 }
 
 void pogobot_motor_jump_set(int power, int motor) {
@@ -366,7 +366,7 @@ void pogobot_calibrate(int power, int startup_duration, int try_duration, int nu
       } else {
         powerLeft -= c;
       }
-      msleep(250);    // pour que le pogo revienne à l'arrêt
+      msleep(170);    // pour que le pogo revienne à l'arrêt
     }
 
     //printf("Calibration complete:\n\tLeft: %d\n\tRight: %d\n", powerLeft, powerRight);

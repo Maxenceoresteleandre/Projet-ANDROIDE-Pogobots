@@ -7,7 +7,7 @@
 
 //##############################################################
 //##############################################################
-// FONCTIONS DE LEDS
+// Quick LEDs animations
 
 void set_all_leds(int r, int g, int b) {
   for (int led=0; led<=4; led++){
@@ -44,11 +44,9 @@ void anim_blink(int r, int g, int b, int number_of_blinks) {
 
 //##############################################################
 //##############################################################
-// FONCTIONS D'AFFICHAGE CONSOLE
+// Console displays
 
 void print_float(float i, int precision) {
-  // prints a float to the console
-  // precision is 10, 100, 1000... and represents the number of decimals to print
   int dec = (int)((i-(int)i) * precision);
   if (dec < 0) {
     dec = -1 * dec;

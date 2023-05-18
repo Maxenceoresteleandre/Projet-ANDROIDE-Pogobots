@@ -1,72 +1,7 @@
 
-//[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
-//[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
-// don't touch these
-
 #define GRAVITY 9.81
-#define C 6
-#define PSEUDO_INVERSE_MAX_ITER 30
-
-// multiply two matrices
-// mat1 : 6x6 or 1x6 (rows x colums)
-// mat2 : 6x6
-void _multMatrixWidthC(
-    float matRes[][C], // the matrix in which is saved the result
-    float mat1[][C],       
-    float mat2[][C], 
-    int r1);            // number of rows of the first matrix (1 or 6)
-
-// add two matrices
-// must have the same size (or runtime error)
-void _addMatrixWidthC(
-    float matRes[][C], 
-    float mat1[][C], 
-    float mat2[][C], 
-    int r);
-
-// subtract mat2 from mat1 (matRes = mat1 - mat2)
-// must have the same size (or runtime error)
-void _subtractMatrixWidthC(
-    float matRes[][C], 
-    float mat1[][C], 
-    float mat2[][C], 
-    int r);
-
-// transpose a [C][C] matrix mat into the [C][C] matrix matRes
-// only works on [C][C] matrices lol
-void _transposeMatrixCbyC(float matRes[][C], float mat[][C]);
-
-// pseudo invert a [C][C] matrix
-// doesn't check for squareness nor non_singulareness cuz i'm still lazyyyyy
-void _pseudoInverseMatrixCbyC(float IM[][C], float mat[][C]);
-
-// makes matRes (CxC matrix) the idendity matrix
-void _identityMatrixCbyC(float matRes[][C]);
-
-// copy mat to matRes
-void _copyMatrixWidthC(float matRes[][C], float mat[][C], int r);
-//]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-//]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-
-
-
-
-
-
-// combine arr1[len1] and arr2[len2] into res[len1+len2] (res = arr1 + arr2 in python)
-void combine_arrays(float res[], float arr1[], float arr2[], int len1, int len2);
-
-// split base[len1+len2] into arr1[len1] and arr2[len2] by putting the len1 first elements into arr1 and len1+1 to len1+len2 into arr2
-void split_array(float base[], float arr1[], float arr2[], int len1, int len2);
-
-// prints to the console the IMU values with and without the Kalman filter
-void print_kalman(int i, float state_estimate_k[][6], float acc[], float gyro[3]);
-
-
-
-
-
-
+#define C 6 // number of columns in the matrices, don't touch that
+#define PSEUDO_INVERSE_MAX_ITER 30 // to find the inverse of a matrix (also don't touch that)
 
 /*
 calibrate the pogobot's motor values with the Kalman filter; durations in milliseconds
@@ -117,4 +52,61 @@ void initExtendedKalmanFilter(
     float sensor_noise_w_k[][C]                // [1][6] 6x1
     );
 
+
+// combine arr1[len1] and arr2[len2] into res[len1+len2] (res = arr1 + arr2 in python)
+void combine_arrays(float res[], float arr1[], float arr2[], int len1, int len2);
+
+// split base[len1+len2] into arr1[len1] and arr2[len2] by putting the len1 first elements into arr1 and len1+1 to len1+len2 into arr2
+void split_array(float base[], float arr1[], float arr2[], int len1, int len2);
+
+// prints to the console the IMU values with and without the Kalman filter
+void print_kalman(int i, float state_estimate_k[][6], float acc[], float gyro[3]);
+
+
+
+
+
+
+//[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
+// DEFINITELY DON'T TOUCH THESE
+
+// multiply two matrices
+// mat1 : 6x6 or 1x6 (rows x colums)
+// mat2 : 6x6
+void _multMatrixWidthC(
+    float matRes[][C], // the matrix in which is saved the result
+    float mat1[][C],       
+    float mat2[][C], 
+    int r1);            // number of rows of the first matrix (1 or 6)
+
+// add two matrices
+// must have the same size (or runtime error)
+void _addMatrixWidthC(
+    float matRes[][C], 
+    float mat1[][C], 
+    float mat2[][C], 
+    int r);
+
+// subtract mat2 from mat1 (matRes = mat1 - mat2)
+// must have the same size (or runtime error)
+void _subtractMatrixWidthC(
+    float matRes[][C], 
+    float mat1[][C], 
+    float mat2[][C], 
+    int r);
+
+// transpose a [C][C] matrix mat into the [C][C] matrix matRes
+// only works on [C][C] matrices lol
+void _transposeMatrixCbyC(float matRes[][C], float mat[][C]);
+
+// pseudo invert a [C][C] matrix
+// doesn't check for squareness nor non_singulareness cuz i'm still lazyyyyy
+void _pseudoInverseMatrixCbyC(float IM[][C], float mat[][C]);
+
+// makes matRes (CxC matrix) the idendity matrix
+void _identityMatrixCbyC(float matRes[][C]);
+
+// copy mat to matRes
+void _copyMatrixWidthC(float matRes[][C], float mat[][C], int r);
+//]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 
