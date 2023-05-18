@@ -21,10 +21,10 @@ build/main.o: main.c \
  ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/sys/cdefs.h \
  ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/strings.h \
  ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/sys/string.h \
+ ../../includes/pogobot.h \
  ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/stdlib.h \
  ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/machine/stdlib.h \
  ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/alloca.h \
- ../../includes/pogobot.h \
  ../../tools//include/litex/soc/software/libbase/console.h \
  ../../tools//include/litex/soc/software/libbase/uart.h \
  ../../tools//include/litex/soc/cores/cpu/vexriscv/system.h \
@@ -73,10 +73,10 @@ build/main.o: main.c \
 ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/sys/cdefs.h:
 ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/strings.h:
 ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/sys/string.h:
+../../includes/pogobot.h:
 ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/stdlib.h:
 ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/machine/stdlib.h:
 ../../tools//include/litex/pythondata-software-picolibc/pythondata_software_picolibc/data/newlib/libc/include/alloca.h:
-../../includes/pogobot.h:
 ../../tools//include/litex/soc/software/libbase/console.h:
 ../../tools//include/litex/soc/software/libbase/uart.h:
 ../../tools//include/litex/soc/cores/cpu/vexriscv/system.h:

@@ -21,6 +21,8 @@ Yellow - 1 side
 
 #define message_length_bytes 100
 #define F 30
+#define HERE 1
+#define MISSING 0
 
 int main(void) {
 
@@ -52,8 +54,17 @@ int main(void) {
     while (1)
     {
         int sender_id[4] = {-1,-1,-1,-1};
+        // match avec sender_id: pour chaque i on regarde le nombre de fois où sender_id est à -1
+        // et on le stock dans neighborsMissing.
+        // ex: si sender_id[0] ne vaut pas -1, il y a un voisin, on met neighborsMsg[0] à 0
+        // si sender_id[0] vaut -1, on incrémente neighborsMsg[0]
+        // si pendant 100 itérations sender_id[0] vaut -1, alors le voisin est parti 
+        // -> on met neighborsHere[0] à 0 dès que neighborsMissing[0] dépasse 100, on le remet à 1 dès que neighborsMissing[0] = 0
+        int neighborsMissing[4] = {0,0,0,0};   
+        int neighborsHere[4] = {MISSING,MISSING,MISSING,MISSING}; 
         pogobot_stopwatch_reset(&t0);
         pogobot_infrared_update();
+
         /* read reception fifo buffer */
         if ( pogobot_infrared_message_available() )
         {
@@ -80,37 +91,47 @@ int main(void) {
             }
         }
 
-        printf("%d,%d,%d,%d\n",sender_id[0],sender_id[1],sender_id[2],sender_id[3]);
+        //printf("%d,%d,%d,%d\n",sender_id[0],sender_id[1],sender_id[2],sender_id[3]);
         int nb_voisins = 0;
         for (int i=0; i<4; i++){
             if (sender_id[i]!=-1) {
                 nb_voisins += 1;
+                neighborsMissing[i] = 0;
+                neighborsHere[i] = HERE;
+            }
+            else {
+                neighborsMissing[i] += 1;
+                if (neighborsMissing[i] >= 100){
+                    neighborsHere[i] = MISSING;
+                }
             }
         }
-        // switch (nb_voisins){
-        //     case 0:
-        //         pogobot_led_setColor( 0, 0, 0 );
-        //         break;
-        //     case 1:
-        //         pogobot_led_setColor( 255, 255, 0 );
-        //         break;
-        //     case 2:
-        //         pogobot_led_setColor( 255, 0, 0 );
-        //         break;
-        //     case 3:
-        //         pogobot_led_setColor( 0, 255, 0 );
-        //         break;
-        //     case 4:
-        //         pogobot_led_setColor( 0, 0, 255 );
-        //         break;
-        // }
+        printf("%d,%d,%d,%d\n",neighborsHere[0],neighborsHere[1],neighborsHere[2],neighborsHere[3]);
+
+        switch (nb_voisins){
+            case 0:
+                pogobot_led_setColor( 0, 0, 0 );
+                break;
+            case 1:
+                pogobot_led_setColor( 0, 255, 255 );
+                break;
+            case 2:
+                pogobot_led_setColor( 255, 0, 0 );
+                break;
+            case 3:
+                pogobot_led_setColor( 0, 255, 0 );
+                break;
+            case 4:
+                pogobot_led_setColor( 0, 0, 255 );
+                break;
+        }
         
-        if (nb_voisins==4){
-            pogobot_led_setColor( 0, 0, 255 );
-        }
-        else{
-            pogobot_led_setColor( 0, 0, 0 );
-        }
+        // if (nb_voisins==4){
+        //     pogobot_led_setColor( 0, 0, 255 );
+        // }
+        // else{
+        //     pogobot_led_setColor( 0, 0, 0 );
+        // }
         if (rand()%100<50){  
             pogobot_infrared_sendMessageAllDirection( 0x1234, message,message_length_bytes);
         }
