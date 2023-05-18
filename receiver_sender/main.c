@@ -6,7 +6,11 @@
  * Please refer to file LICENCE for details.
 **/
 
-/* clang-format-ok */
+/* 
+Border detection first version (Pogobots change color (Blue) if they have neighbors on all sides). 
+Red - sending a message
+Green - reading a message
+*/
 
 #include <stdio.h>
 #include <string.h>
