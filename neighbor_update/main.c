@@ -51,17 +51,19 @@ int main(void) {
     time_reference_t t0;
     uint32_t t1;
 
+    // match avec sender_id: pour chaque i on regarde le nombre de fois où sender_id est à -1
+    // et on le stock dans neighborsMissing.
+    // ex: si sender_id[0] ne vaut pas -1, il y a un voisin, on met neighborsMsg[0] à 0
+    // si sender_id[0] vaut -1, on incrémente neighborsMsg[0]
+    // si pendant 70 (50 c'est pas tout à fait assez, 100 c'est un peu trop long) 
+    // itérations sender_id[0] vaut -1, alors le voisin est parti 
+    // -> on met neighborsHere[0] à 0 dès que neighborsMissing[0] dépasse 100, on le remet à 1 dès que neighborsMissing[0] = 0
+    int neighborsMissing[4] = {0,0,0,0};   
+    int neighborsHere[4] = {MISSING,MISSING,MISSING,MISSING}; 
+
     while (1)
     {
         int sender_id[4] = {-1,-1,-1,-1};
-        // match avec sender_id: pour chaque i on regarde le nombre de fois où sender_id est à -1
-        // et on le stock dans neighborsMissing.
-        // ex: si sender_id[0] ne vaut pas -1, il y a un voisin, on met neighborsMsg[0] à 0
-        // si sender_id[0] vaut -1, on incrémente neighborsMsg[0]
-        // si pendant 100 itérations sender_id[0] vaut -1, alors le voisin est parti 
-        // -> on met neighborsHere[0] à 0 dès que neighborsMissing[0] dépasse 100, on le remet à 1 dès que neighborsMissing[0] = 0
-        int neighborsMissing[4] = {0,0,0,0};   
-        int neighborsHere[4] = {MISSING,MISSING,MISSING,MISSING}; 
         pogobot_stopwatch_reset(&t0);
         pogobot_infrared_update();
 
@@ -73,16 +75,11 @@ int main(void) {
                 message_t mr;
                 pogobot_infrared_recover_next_message( &mr );
 
-                //printf("len : %d,%s\n", strlen(mr.payload), mr.payload);
                 int s_id = mr.header._sender_id;
                 int i=0;
                 for (i=0; i<4; i++){
                     if (sender_id[i]==-1){
                         sender_id[i]=s_id;
-                        break;
-                    }
-                    if (s_id == sender_id[i]){
-                        // pogobot_stopwatch_reset(&timers[i]);
                         break;
                     }
                 }  
@@ -91,23 +88,26 @@ int main(void) {
             }
         }
 
-        //printf("%d,%d,%d,%d\n",sender_id[0],sender_id[1],sender_id[2],sender_id[3]);
-        int nb_voisins = 0;
         for (int i=0; i<4; i++){
             if (sender_id[i]!=-1) {
-                nb_voisins += 1;
                 neighborsMissing[i] = 0;
                 neighborsHere[i] = HERE;
             }
             else {
                 neighborsMissing[i] += 1;
-                if (neighborsMissing[i] >= 100){
+                if (neighborsMissing[i] >= 70){
                     neighborsHere[i] = MISSING;
                 }
             }
         }
         printf("%d,%d,%d,%d\n",neighborsHere[0],neighborsHere[1],neighborsHere[2],neighborsHere[3]);
 
+        int nb_voisins = 0;
+        for (int i=0; i<4; i++){
+            if (neighborsHere[i] == HERE){
+                nb_voisins++;
+            }
+        }
         switch (nb_voisins){
             case 0:
                 pogobot_led_setColor( 0, 0, 0 );
@@ -135,8 +135,6 @@ int main(void) {
         if (rand()%100<50){  
             pogobot_infrared_sendMessageAllDirection( 0x1234, message,message_length_bytes);
         }
-        //printf( "front : %d \nright : %d \nback : %d \nleft : %d \n",
-                //neighbour_ir_front, neighbour_ir_right, neighbour_ir_back, neighbour_ir_left);
 
         pogobot_infrared_clear_message_queue();
         pogobot_infrared_update();
