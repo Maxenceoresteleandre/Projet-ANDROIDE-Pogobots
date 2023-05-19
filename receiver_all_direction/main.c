@@ -6,7 +6,7 @@
  * Please refer to file LICENCE for details.
 **/
 
-/* clang-format-ok */
+/* Pogobot turn on its LED in green when he receives a message. */
 
 #include <stdio.h>
 #include <string.h>
