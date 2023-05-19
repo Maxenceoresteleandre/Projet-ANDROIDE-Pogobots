@@ -7,6 +7,7 @@
 **/
 /**
 Sending messages in all directions, of size message_length_bytes-1 bytes, a string composed of 'a'.
+Red - sending
 **/
 #include <stdio.h>
 #include <string.h>
