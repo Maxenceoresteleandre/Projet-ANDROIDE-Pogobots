@@ -1,7 +1,8 @@
 
-#define GRAVITY 9.81
-#define C 6 // number of columns in the matrices, don't touch that
+#define GRAVITY 9.81 // it's the gravity. You should know what gravity is.
+#define C 6 // number of columns in the matrices, don't touch that, it's important for Kalman
 #define PSEUDO_INVERSE_MAX_ITER 30 // to find the inverse of a matrix (also don't touch that)
+
 
 /*
 calibrate the pogobot's motor values with the Kalman filter; durations in milliseconds
@@ -19,7 +20,8 @@ void pogobot_calibrate(int power, int startup_duration, int try_duration, int nu
 // calibrate with fewer parameters, duration in milliseconds
 void pogobot_quick_calibrate(int power, int* leftMotorVal, int* rightMotorVal);
 
-// safely initiate motor value (jumpstart if value is under 512)
+// safely initiate motor value: 
+// if power < 512, then set the motor power at 512 for 50ms so that the motor has enough power to start, then set the motor power at power
 void pogobot_motor_jump_set(int power, int motor);
 
 // code for the extended Kalman Filter algorithm 
@@ -39,7 +41,10 @@ void extendedKalmanFilter(
     float P_k[][C]                             // [6][6] 6x6
     );
 
-//void init_kalman();
+// initialize the Kalman filter arguments
+// to use : 
+//      power = power
+//      the rest of the arguments can have any value, we just need the memory space
 void initExtendedKalmanFilter(
     int power,
     float state_estimate_k_minus_1[][C],       // [1][6] 6x1
@@ -67,10 +72,12 @@ void print_kalman(int i, float state_estimate_k[][6], float acc[], float gyro[3]
 
 
 
+
+
 //[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[
 // DEFINITELY DON'T TOUCH THESE
 
-// multiply two matrices
+// multiply two matrices and save the result into matRes
 // mat1 : 6x6 or 1x6 (rows x colums)
 // mat2 : 6x6
 void _multMatrixWidthC(
@@ -79,7 +86,7 @@ void _multMatrixWidthC(
     float mat2[][C], 
     int r1);            // number of rows of the first matrix (1 or 6)
 
-// add two matrices
+// add two matrices and save the result into matRes
 // must have the same size (or runtime error)
 void _addMatrixWidthC(
     float matRes[][C], 
@@ -87,7 +94,7 @@ void _addMatrixWidthC(
     float mat2[][C], 
     int r);
 
-// subtract mat2 from mat1 (matRes = mat1 - mat2)
+// subtract mat2 from mat1 (matRes = mat1 - mat2) and save the result into matRes
 // must have the same size (or runtime error)
 void _subtractMatrixWidthC(
     float matRes[][C], 
@@ -99,11 +106,11 @@ void _subtractMatrixWidthC(
 // only works on [C][C] matrices lol
 void _transposeMatrixCbyC(float matRes[][C], float mat[][C]);
 
-// pseudo invert a [C][C] matrix
-// doesn't check for squareness nor non_singulareness cuz i'm still lazyyyyy
+// pseudo invert a [C][C] matrix and save the result into mat
+// CAREFUL : doesn't check for squareness nor non_singulareness
 void _pseudoInverseMatrixCbyC(float IM[][C], float mat[][C]);
 
-// makes matRes (CxC matrix) the idendity matrix
+// saves into matRes (CxC matrix) the idendity matrix
 void _identityMatrixCbyC(float matRes[][C]);
 
 // copy mat to matRes

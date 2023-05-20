@@ -1,6 +1,10 @@
 
-# [Projet P-ANDROIDE - M1/S2 - 2023 - Partie calibration et filtre de Kalman](http://androide.lip6.fr/?q=node/674)
+# [Projet P-ANDROIDE - M1/S2 - 2023 - Calibration and Kalman filter](http://androide.lip6.fr/?q=node/674)
 
+
+This repository contains a Kalman filter for a Pogobot IMU, along with an algorithm to automatically find correct motor values for the Pogobot to move in a straight line. The Kalman filter is great for Pogobots as it renders IMU data usable at runtime, while using very little memory space and computation time. The calibration algorithm works by checking the values from the IMU (with the Kalman filter applied) and modifying the motor values accordingly to minimize the rotation (gyroscope on the Z axis). <br />
+The ***main.c*** file contains a program that will calibrate the robot and then will make it move forward in a (hopefully) straight line indefinitely, while printing the values from the Kalman filter to the console. <br />
+__LIMITATIONS:__ Note that the calibration isn't even foolproof. It only finds optimal motor values, but sometimes no combination of values on the left and right motor can make a Pogobot move in a straight line. In addition, terrain imperfections can mess up the calibration, or even the robot path after the calibration is complete. Finally, robots can decalibrate over time. 
 
 
 ## Pogobot Calibration 
@@ -30,6 +34,7 @@ void pogobot_calibrate(int power, int startup_duration, int try_duration, int nu
 ## Kalman filter implementation in C
 
 The Kalman filter is executable at runtime. It is used to reduce the noise from the IMU. In particular, the z axis of the gyroscope (horizontal rotation) can be used to determine if the pogobot is turning. It is used in pogobot_calibrate() but can be used elsewhere.
+This implementation of the Kalman filter is inspired from Addison Sears-Collins's ***Extended Kalman Filter example (two-wheeled mobile robot)*** (https://automaticaddison.com). It mainly uses matrix transformations. The original code was adapted with parameter values more fitting for the Pogobots, and was translated to C.
 
 **Functions:**
 
