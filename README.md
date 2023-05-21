@@ -1,8 +1,10 @@
 # Projet-ANDROIDE-Pogobots
 
-Objectifs:
+Ce dépot est consacré à notre contribution au projet P-ANDROIDE Pogobots portant sur la robotique en essaim.
+
+OBJECTIFS du projet:
 - Trouver un moyen de corriger la trajectoire en ligne droite d'un Pogobot:
-    * soit dynamiquement à partir des données de l'IMU (filtre de Kalman, compliqué)
+    * soit dynamiquement à partir des données de l'IMU (implémentation d'un filtre de Kalman)
     * soit à la main en calibrant les moteurs
 
 - Etudier comment les robots communiquent:
@@ -20,10 +22,13 @@ Objectifs:
     * dispersion (les pogobots s'écartent les uns des autres)
 
 
-OU ON EN EST:
-- Données de l'IMU:
-    * Bruit très intense lorsqu'on allume les moteurs, plus la puissance des moteurs est haute, plus il y a de bruit
-    * Comment implémenter un filtre de Kalman prenant en compte tous ces paramètres:
-        * 3 moteurs en tout sur un pogobot, pas forcément tous allumés, pas au même moment etc
-        * l'idée de base était d'utiliser l'IMU pour calibrer les moteurs afin de suivre une trajectoire en ligne droite. Hors, si on modifie dynamiquement la puissance des moteurs, le bruit est lui aussi changé => filtre de Kalman doit être modifié en conséquence... cycle vicieux non ?
-    * idée: calibrer à la main le pogobot, soit via l'api, soit avec un verre (élaborer le protocole)
+NOTRE CONTRIBUTION:
+- Au niveau du déplacement:
+   - Etude de la vitesse de déplacement d'un robot
+   - Implémentation d'un filtre de Kalman sur les données de l'IMU
+   - Etude des effets du filtre pour plusieurs trajectoires sur robot déplacé à la main, moteurs droit et gauche à différentes puissances
+   - Correction de la trajectoire en effectuant un cablibrage sur les moteurs à l'aide des données passées au filtre Kalman
+- Au niveau de la communication:
+   - Etude du rayon de communication entre deux robots
+   - Etude de la capacité de communication en prenant en compte les collisions de messages et le temps de sonde
+   - Implémentation de la détection de bordure
