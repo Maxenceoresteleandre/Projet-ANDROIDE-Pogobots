@@ -20,8 +20,9 @@ Yellow - 1 side
 
 
 #define message_length_bytes 100
-#define F 30
-#define FREQEMISSION 100
+// faire varier les paramètres suivants, par pas de 10:
+#define F 170                // en fonction du temps de sonde -> de 0 à 200Hz
+#define FREQEMISSION 50      // en fonction de la fréquence d'émission -> de 0 à 100%
 
 int main(void) {
 
@@ -46,6 +47,7 @@ int main(void) {
     uint32_t t1;
 
     while (1) {
+        pogobot_led_setColor( 0, 0, 0 );
         pogobot_stopwatch_reset(&t0);
         pogobot_infrared_update();
 
@@ -59,13 +61,16 @@ int main(void) {
         
         if (rand()%100<FREQEMISSION){  
             pogobot_infrared_sendMessageAllDirection( 0x1234, message, message_length_bytes);
+            pogobot_led_setColor( 150, 0, 150 );
         }
 
         pogobot_infrared_clear_message_queue();
         pogobot_infrared_update();
     
         t1=pogobot_stopwatch_get_elapsed_microseconds(&t0);
-        msleep( (1000000/F - t1)/1000 );
+        if ((F != 0) && (t1 < 1000000/F)) {
+            msleep( (1000000/F - t1)/1000 );
+        }
     }
 
 }

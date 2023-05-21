@@ -6,7 +6,8 @@
 import matplotlib.pyplot as plt
 
 
-f = open("dataFreq.txt")
+# f = open("dataFreq.txt")
+f = open("dataFreq2.txt")
 l = f.readlines()
 f.close()
 
@@ -19,8 +20,8 @@ for seq in l:
     y.append(int(seqBis[1]))
 
 plt.plot(x, y)
-plt.xlabel("Fréquence d'émission")
+plt.xlabel("Fréquence d'émission (%)")
 plt.ylabel("Nombre de messages reçus")
 
-plt.title("Nombre de messages reçus en fonction de la fréquence d'émission (conversation entre 3 robots)")
+plt.title("Nombre de messages reçus en fonction de la fréquence d'émission (conversation entre 3 robots, fréquence de tick: 30Hz)")
 plt.show()
