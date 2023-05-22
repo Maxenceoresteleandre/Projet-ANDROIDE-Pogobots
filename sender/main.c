@@ -13,7 +13,7 @@ Red - sending
 #include <string.h>
 #include "pogobot.h"
 
-#define message_length_bytes 385
+#define message_length_bytes 384
 
 int main(void) {
     pogobot_init();
@@ -42,7 +42,7 @@ int main(void) {
         // 0 success
         bool b = pogobot_infrared_sendMessageAllDirection( 0x1234, message,message_length_bytes);
         if (b == 0){
-            printf("SENDING %d...\n",message_length_bytes);
+            printf("SENDING %d...\n",message_length_bytes+1);
             pogobot_infrared_update();   
             pogobot_led_setColor( 255, 0, 0 );
         }
