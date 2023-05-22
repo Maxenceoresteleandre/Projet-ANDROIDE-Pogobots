@@ -31,7 +31,7 @@ int main(void) {
                 printf( "You've got a new message ! \n" );
                 message_t mr;
                 pogobot_infrared_recover_next_message( &mr );
-                printf("len : %d,%s\n",strlen(mr.payload),mr.payload);
+                printf("len : %d,%s\n",strlen(mr.payload)+1,mr.payload);
 
                 
                 pogobot_led_setColor( 0, 255, 0 );
