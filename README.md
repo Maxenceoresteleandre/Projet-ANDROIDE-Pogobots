@@ -35,4 +35,5 @@ NOTRE CONTRIBUTION:
 
 Liens des vidéos:
 - Calibrage des robots: https://youtu.be/IlVtnMUnCf0
-- Détection de bordure:
+- Envoi de message avec une règle en plexiglas: https://youtube.com/shorts/I_IfwiTpmD0?feature=share
+- Détection de bordure: https://youtube.com/shorts/tM0YwDOTcRI?feature=share
