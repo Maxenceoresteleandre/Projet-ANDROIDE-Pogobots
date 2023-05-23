@@ -34,6 +34,6 @@ NOTRE CONTRIBUTION:
    - Implémentation de la détection de bordure
 
 Liens des vidéos:
-- Calibrage des robots: https://youtu.be/IlVtnMUnCf0
+- Calibrage des robots: https://www.youtube.com/watch?v=7Rjwod2-fSE
 - Envoi de message avec une règle en plexiglas: https://youtube.com/shorts/I_IfwiTpmD0?feature=share
 - Détection de bordure: https://youtube.com/shorts/tM0YwDOTcRI?feature=share
