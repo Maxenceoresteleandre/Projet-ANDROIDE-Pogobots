@@ -13,7 +13,7 @@ Red - sending
 #include <string.h>
 #include "pogobot.h"
 
-#define message_length_bytes 385
+#define message_length_bytes 384
 
 int main(void) {
     pogobot_init();
