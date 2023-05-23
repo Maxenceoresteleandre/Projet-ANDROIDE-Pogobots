@@ -4,6 +4,8 @@
  * Copyright © 2022 Sorbonne Université ISIR
  * This file is licensed under the Expat License, sometimes known as the MIT License.
  * Please refer to file LICENCE for details.
+
+ Displays various IMU data. 
 **/
 
 #include "imu_data_filter.h"
