@@ -6,22 +6,36 @@
 import matplotlib.pyplot as plt
 
 
-# f = open("dataFreq.txt")
-f = open("dataFreq2.txt")
-l = f.readlines()
-f.close()
+f1 = open("data/dataFreqAvecClean.txt")
+f2 = open("data/dataFreqSansClean.txt")
+l1 = f1.readlines()
+f1.close()
+l2 = f2.readlines()
+f2.close()
 
 x = []
 y = []
-for seq in l:
+for seq in l1:
+    seqBis = seq.split()
+    
+    x.append(int(seqBis[0]))
+    y.append(int(seqBis[1]))
+plt.plot(x, y, label="en vidant la liste de messages à chaque itération")
+
+x = []
+y = []
+for seq in l2:
     seqBis = seq.split()
     
     x.append(int(seqBis[0]))
     y.append(int(seqBis[1]))
 
-plt.plot(x, y)
-plt.xlabel("Fréquence d'émission (%)")
+plt.plot(x, y, label="sans la liste de messages à chaque itération")
+
+
+plt.xlabel("Fréquence d'émission en moyenne (%)")
 plt.ylabel("Nombre de messages reçus")
 
 plt.title("Nombre de messages reçus en fonction de la fréquence d'émission (conversation entre 3 robots, fréquence de tick: 30Hz)")
+plt.legend()
 plt.show()

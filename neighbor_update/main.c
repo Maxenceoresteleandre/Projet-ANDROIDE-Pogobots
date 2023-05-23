@@ -34,7 +34,7 @@ int main(void) {
     // pogobot_infrared_emitter_power_twoThird - 2
     // pogobot_infrared_emitter_power_oneThird - 1
     // pogobot_infrared_emitter_power_null - 0
-    pogobot_infrared_set_power( pogobot_infrared_emitter_power_max );
+    pogobot_infrared_set_power( pogobot_infrared_emitter_power_twoThird );
 
     unsigned char message[message_length_bytes];
     int i;
@@ -82,6 +82,9 @@ int main(void) {
                         sender_id[i]=s_id;
                         break;
                     }
+                    if (sender_id[i] == s_id){
+                        break;
+                    }
                 }  
 
                 
@@ -95,12 +98,13 @@ int main(void) {
             }
             else {
                 neighborsMissing[i] += 1;
-                if (neighborsMissing[i] >= 70){
+                if (neighborsMissing[i] >= 100){
                     neighborsHere[i] = MISSING;
                 }
             }
         }
-        printf("%d,%d,%d,%d\n",neighborsHere[0],neighborsHere[1],neighborsHere[2],neighborsHere[3]);
+        printf("Sender_id = %d,%d,%d,%d\n", sender_id[0], sender_id[1], sender_id[2], sender_id[3]);
+        printf("NeighborsHere = %d,%d,%d,%d\n",neighborsHere[0],neighborsHere[1],neighborsHere[2],neighborsHere[3]);
 
         int nb_voisins = 0;
         for (int i=0; i<4; i++){

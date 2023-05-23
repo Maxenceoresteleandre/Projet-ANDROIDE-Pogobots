@@ -6,36 +6,40 @@
 import matplotlib.pyplot as plt
 
 
-f1 = open("dataSondeAvecClean.txt")
-f2 = open("dataSondeSansClean.txt")
-l1 = f1.readlines()
-f1.close()
-l2 = f2.readlines()
-f2.close()
+f = open("data/dataSonde.txt")
+l = f.readlines()
+f.close()
 
 x = []
 y = []
-for seq in l1:
+for seq in l:
     seqBis = seq.split()
     
-    x.append(int(seqBis[0]))
+    x.append(float(seqBis[0]))
     y.append(int(seqBis[1]))
-plt.plot(x, y, label="en vidant la liste de messages à chaque itération")
+plt.subplot(2, 1, 1)
+plt.plot(x, y)
+plt.xlabel("Temps de sonde (s)")
+plt.ylabel("Nombre de messages")
+plt.title("Nombre de messages reçus en fonction du temps de sonde \n(conversation entre 4 robots, freq d'émission: 50%, freq de tick: 30Hz)")
 
 x = []
 y = []
-for seq in l2:
+for seq in l:
     seqBis = seq.split()
     
-    x.append(int(seqBis[0]))
-    y.append(int(seqBis[1]))
+    x.append(float(seqBis[0]))
+    y.append(int(seqBis[2]))
+plt.subplot(2, 1, 2)
+plt.plot(x, y)
+plt.xlabel("Temps de sonde (s)")
+plt.ylabel("Nombre de voisins")
+plt.title("Nombre de voisins perçus en fonction du temps de sonde \n(conversation entre 4 robots, freq d'émission: 50%, freq de tick: 30Hz)")
 
-plt.plot(x, y, label="sans la liste de messages à chaque itération")
-
-
-plt.xlabel("Nombre de ticks par seconde")
-plt.ylabel("Nombre de messages reçus")
-
-plt.title("Nombre de messages reçus en fonction du temps de sonde (conversation entre 3 robots, freq d'émission: 50%)")
-plt.legend()
+plt.subplots_adjust(left=0.1,
+                    bottom=0.1,
+                    right=0.9,
+                    top=0.9,
+                    wspace=0.4,
+                    hspace=0.6)
 plt.show()
