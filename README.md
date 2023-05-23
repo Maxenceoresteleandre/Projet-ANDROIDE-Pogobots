@@ -32,3 +32,7 @@ NOTRE CONTRIBUTION:
    - Etude du rayon de communication entre deux robots
    - Etude de la capacité de communication en prenant en compte les collisions de messages et le temps de sonde
    - Implémentation de la détection de bordure
+
+Liens des vidéos:
+- Calibrage des robots: https://youtu.be/IlVtnMUnCf0
+- Détection de bordure:
