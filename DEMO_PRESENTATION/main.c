@@ -17,6 +17,8 @@ Yellow - 1 side
 #include <string.h>
 #include <stdlib.h>
 #include "pogobot.h"
+#include "kalman.h"
+#include "display.h"
 
 #define POWER 700
 #define message_length_bytes 100
