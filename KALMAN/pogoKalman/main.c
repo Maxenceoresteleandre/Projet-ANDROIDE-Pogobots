@@ -11,6 +11,7 @@ Notes :
     - the calibration only finds optimal values for the motors once. This system doesn't do anything for irregularities in the environment that might disrupt the robot.
 */
 
+#define POWER 700
 
 
 int main(int argc, char* argv[]) {
@@ -26,7 +27,7 @@ int main(int argc, char* argv[]) {
     int rightMotorVal;
 
     // calibrate the pogobot with motor values set at around 700 (set them between 0 and 1024 in theory, but between 512 and 1024 in practice¹)
-    pogobot_quick_calibrate(700, &leftMotorVal, &rightMotorVal); // will take some time
+    pogobot_quick_calibrate(POWER, &leftMotorVal, &rightMotorVal); // will take some time
         // same thing as : 
         // pogobot_calibrate(power=700, startup_duration=500, try_duration=750, number_of_tries=9, correction=50.0f, &leftMotorVal, &rightMotorVal);
             // power : the value you want the motors to be calibrated at (roughly)
@@ -58,9 +59,8 @@ int main(int argc, char* argv[]) {
     float H_k[6][6];
     float sensor_noise_w_k[1][6];
 
-    for (int i=0; i<number_of_tries; i++) {
     initExtendedKalmanFilter(
-        power,
+        POWER,
         state_estimate_k_minus_1,       // [1][6] 
         P_k_minus_1,                    // [6][6] 
         A_k_minus_1,                    // [6][6] 
