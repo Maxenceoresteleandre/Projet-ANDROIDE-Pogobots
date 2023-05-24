@@ -23,7 +23,7 @@ Yellow - 1 side
 // faire varier les paramètres suivants, par pas de 10:
 #define F 30               
 #define FREQEMISSION 50     // en fonction de la fréquence d'émission -> de 0 à 100%
-#define TEMPSSONDE 0.1e6
+#define TEMPSSONDE 1e6
 
 int main(void) {
 
@@ -43,10 +43,6 @@ int main(void) {
         message[i] = 'a';
     }
     message[i-1] = '\0';
-
-    pogobot_led_setColor( 150, 0, 150 );
-    msleep(5000);
-    pogobot_led_setColor( 0, 0, 0 );    // petit temps avant de commencer pour placer le robot
 
     time_reference_t t0;    // tick
     uint32_t t1;
@@ -94,8 +90,6 @@ int main(void) {
 
             pogobot_infrared_clear_message_queue(); // clean pour le temps de sonde
             pogobot_infrared_update();
-
-            iter++;
         
             t1=pogobot_stopwatch_get_elapsed_microseconds(&t0);
             if ((F != 0) && (t1 < 1000000/F)) {
@@ -112,6 +106,8 @@ int main(void) {
             }
         }
         printf("%d %d\n", nbMsgRecus, nbVoisins);
+
+        iter++;
 
     }
 

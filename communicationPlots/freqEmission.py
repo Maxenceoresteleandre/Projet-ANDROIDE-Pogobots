@@ -30,12 +30,12 @@ for seq in l2:
     x.append(int(seqBis[0]))
     y.append(int(seqBis[1]))
 
-plt.plot(x, y, label="sans la liste de messages à chaque itération")
+plt.plot(x, y, label="sans vider la liste de messages à chaque itération")
 
 
 plt.xlabel("Fréquence d'émission en moyenne (%)")
 plt.ylabel("Nombre de messages reçus")
 
-plt.title("Nombre de messages reçus en fonction de la fréquence d'émission (conversation entre 3 robots, fréquence de tick: 30Hz)")
+plt.title("Nombre de messages reçus en fonction de la fréquence d'émission \n(conversation entre 3 robots, fréquence de tick: 30Hz)")
 plt.legend()
 plt.show()
