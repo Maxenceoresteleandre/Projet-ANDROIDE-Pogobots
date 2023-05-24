@@ -47,7 +47,6 @@ int main(void) {
     uint32_t t1;
 
     while (1) {
-        pogobot_led_setColor( 0, 0, 0 );
         pogobot_stopwatch_reset(&t0);
         pogobot_infrared_update();
 
