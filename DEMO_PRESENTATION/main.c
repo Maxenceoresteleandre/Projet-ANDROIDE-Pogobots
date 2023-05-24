@@ -32,16 +32,20 @@ int main(void) {
 
     printf("init ok\n");
 
+    int noLight = 1;
+    while(noLight) {
+        if (pogobot_photosensors_read(0) > 120) {
+            noLight = 0;
+        }
+    }
+
+    anim_blink(255, 255, 255, 5);
+
     int leftMotorVal;
     int rightMotorVal;
     pogobot_quick_calibrate(POWER, &leftMotorVal, &rightMotorVal);
 
-    int noLight = 1;
-    while(noLight) {
-        if (pogobot_photosensors_read(0) > 100) {
-            noLight = 0;
-        }
-    }
+    
 
 
     pogobot_motor_jump_set(motorL, leftMotorVal);
