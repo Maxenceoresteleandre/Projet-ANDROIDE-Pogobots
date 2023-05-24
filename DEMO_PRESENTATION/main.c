@@ -18,7 +18,7 @@ Yellow - 1 side
 #include <stdlib.h>
 #include "pogobot.h"
 
-
+#define POWER 700
 #define message_length_bytes 100
 #define F 30
 #define HERE 1
@@ -32,7 +32,7 @@ int main(void) {
 
     int leftMotorVal;
     int rightMotorVal;
-    pogobot_quick_calibrate(700, &leftMotorVal, &rightMotorVal);
+    pogobot_quick_calibrate(POWER, &leftMotorVal, &rightMotorVal);
 
     int noLight = 1;
     while(noLight) {
@@ -40,6 +40,10 @@ int main(void) {
             noLight = 0;
         }
     }
+
+
+    pogobot_motor_jump_set(motorL, leftMotorVal);
+    pogobot_motor_jump_set(motorR, rightMotorVal);
 
     srand(pogobot_helper_getRandSeed());
     // pogobot_infrared_emitter_power_max - 3
