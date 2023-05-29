@@ -1,3 +1,8 @@
+## auteur: Loona Macabre
+# plot du nombre de messages reçus et de voisins perçus en fonction du temps de sonde
+# de 0 à 1 seconde avec un pas de 0.1 seconde
+# Pour chaque temps de sonde: 10 expériences
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -71,12 +76,14 @@ plt.subplot(122)
 plt.boxplot(nbMsg.T)
 plt.xlabel("Temps de sonde (s)")
 plt.ylabel("Nombre de messages")
+plt.xticks([1,2,3,4,5,6,7,8,9,10], temps)
 plt.title("Nombre de messages reçus en fonction du temps de sonde\n sur 10 expériences (conversation entre 4 robots,\n freq d'émission: 50%, freq de tick: 30Hz)")
 
 plt.subplot(121)
 plt.boxplot(nbVoisins.T)
 plt.xlabel("Temps de sonde (s)")
 plt.ylabel("Nombre de voisins")
+plt.xticks([1,2,3,4,5,6,7,8,9,10], temps)
 plt.title("Nombre de voisins perçus en fonction du temps de sonde\n sur 10 expériences (conversation entre 4 robots,\n freq d'émission: 50%, freq de tick: 30Hz)")
 
 plt.show()

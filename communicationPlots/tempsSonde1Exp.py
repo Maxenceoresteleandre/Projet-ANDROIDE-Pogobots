@@ -1,7 +1,6 @@
 ## auteur: Loona Macabre
-# plot du nombre de messages reçus en fonction du temps de sonde
-# les mesures ont été prises sur 100 itérations (cf receiver/main.c)
-# pour des fréquences de tick de 10 à 100Hz
+# plot du nombre de messages reçus et de voisins perçus en fonction du temps de sonde
+# de 0 à 1 seconde avec un pas de 0.1 seconde
 
 import matplotlib.pyplot as plt
 

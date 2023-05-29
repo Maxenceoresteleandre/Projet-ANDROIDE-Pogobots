@@ -6,12 +6,17 @@
  * Please refer to file LICENCE for details.
 **/
 
-/* 
-Border detection (Pogobots change color (Blue) if they have neighbors on all sides).
-Green - 3 sides
-Red - 2 sides
-Yellow - 1 side
-*/
+/**
+ * Ce code correspond à l'algo suivant:
+ * Tant que le nombre d'expériences n'est pas atteint:
+ * - Réinitialiser le tick
+ * - Dépiler ses messages
+ * - Regarder l'id de l'expéditeur:
+ *      - si il est nouveau, on incrémente le nombre de voisins identifiés autour de nous
+ * - Envoyer un message avec FREQEMISSION % de chance
+ * - Dormir jusqu'à la fin du tick
+ * - Afficher sur la console le nombre de voisins perçus et le nombre de messages reçus
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -21,9 +26,9 @@ Yellow - 1 side
 
 #define message_length_bytes 100
 // faire varier les paramètres suivants, par pas de 10:
-#define F 30               
+#define FTICK 30               
 #define FREQEMISSION 50     // en fonction de la fréquence d'émission -> de 0 à 100%
-#define TEMPSSONDE 1e6
+#define TEMPSSONDE 1e6      // en fonction du temps de sonde -> de 0 à 1 seconde
 
 int main(void) {
 
@@ -91,9 +96,9 @@ int main(void) {
             pogobot_infrared_clear_message_queue(); // clean pour le temps de sonde
             pogobot_infrared_update();
         
-            t1=pogobot_stopwatch_get_elapsed_microseconds(&t0);
-            if ((F != 0) && (t1 < 1000000/F)) {
-                msleep( (1000000/F - t1)/1000 );
+            t1=pogobot_stopwatch_get_elapsed_microseconds(&t0); // si on a dépassé le tick, on ignore la phase sleep
+            if ((FTICK != 0) && (t1 < 1000000/FTICK)) {
+                msleep( (1000000/FTICK - t1)/1000 );
             }
 
             tEndExp = pogobot_stopwatch_get_elapsed_microseconds(&tStartExp);
@@ -105,7 +110,7 @@ int main(void) {
                 nbVoisins++;
             }
         }
-        printf("%d %d\n", nbMsgRecus, nbVoisins);
+        printf("Nombre de messages reçus: %d, nombre de voisins perçus: %d\n", nbMsgRecus, nbVoisins);
 
         iter++;
 

@@ -6,12 +6,14 @@
  * Please refer to file LICENCE for details.
 **/
 
-/* 
-Border detection (Pogobots change color (Blue) if they have neighbors on all sides).
-Green - 3 sides
-Red - 2 sides
-Yellow - 1 side
-*/
+/**
+ * Ce code correspond à l'algo suivant:
+ * En boucle:
+ * - Réinitialiser le tick
+ * - Dépiler ses messages
+ * - Envoyer un message avec FREQEMISSION % de chance
+ * - Dormir jusqu'à la fin du tick
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -21,7 +23,7 @@ Yellow - 1 side
 
 #define message_length_bytes 100
 // faire varier les paramètres suivants, par pas de 10:
-#define F 30                
+#define FTICK 30                
 #define FREQEMISSION 50      // en fonction de la fréquence d'émission -> de 0 à 100%
 
 int main(void) {
@@ -66,9 +68,9 @@ int main(void) {
         pogobot_infrared_clear_message_queue();
         pogobot_infrared_update();
     
-        t1=pogobot_stopwatch_get_elapsed_microseconds(&t0);
-        if ((F != 0) && (t1 < 1000000/F)) {
-            msleep( (1000000/F - t1)/1000 );
+        t1=pogobot_stopwatch_get_elapsed_microseconds(&t0); // si on a dépassé le tick, on ignore la phase sleep
+        if ((FTICK != 0) && (t1 < 1000000/FTICK)) {
+            msleep( (1000000/FTICK - t1)/1000 );
         }
     }
 
