@@ -1,3 +1,5 @@
+Expériences sur les Pogobots, Loona Macabre, Master ANDROIDE, Mai 2023
+
 Fichiers relatifs aux expériences concernant la communication:
 - Nombre de messages reçus et voisins perçus par un robot (receiver) en fonction de la fréquence d'émission de message
 - Nombre de messages reçus et voisins perçus par un robot en fonction de son temps de sonde
@@ -21,9 +23,10 @@ Protocole:
 - faire exécuter le code à chaque robot, en branchant le robot receiver en dernier et en le gardant branché pour les affichages console
 - recopier les résultats dans les fichiers data à lire par le python
 - recommencer en changeant les paramètres testés
+- dans un terminal, appeler les fichiers python pour tracer les graphes
 
-Ce que j'ai fait: 
-- Pour les 10 expériences répétées, j'ai écrit le fichier tempsSonde10Exp.py qui trace les différents graphes (courbes, boxplots et moyenne+écart type) d'évolution du nombre de voisins et de messages en fonction du temps de sonde.
+Informations sur ce que j'ai fait: 
+- Pour les 10 expériences répétées, j'ai écrit le fichier tempsSonde10Exp.py qui trace les différents graphes (courbes, boxplots et moyenne+écart type) d'évolution du nombre de voisins et de messages en fonction du temps de sonde. Sinon, j'ai juste fait une seule expérience par fréquence/temps de sonde testé et plot les graphes résultant dans freqEmission.py et tempsSonde1Exp.py.
 - A chaque fois j'écrit les affichages à la main dans les fichiers data car je n'ai pas pu écrire directement dans les fichiers depuis receiver/main.c. Ma manière de faire est assez laborieuse
 - répertoire data:
     - dataFreqAvecClean.txt: nombre de messages reçus en vidant la pile à chaque passage dans le while. ligne i = nombre de messages avec la fréquence i
