@@ -15,7 +15,7 @@ L'expérience consiste à faire sonder le robot pendant un certain temps puis af
 Protocole:
 - CHANGEMENT DE LA FREQUENCE D'EMISSION DE MESSAGES:
     - dans senders/main.c: mettre la fréquence à tester à la ligne 27 #define FREQEMISSION
-    - dans receiver/main.c: idem
+    - dans receiver/main.c: idem ligne 30
 - CHANGEMENT DU TEMPS DE SONDE:
     - dans receiver/main.c: changer la ligne 31 #define TEMPSSONDE avec le temps de sonde à tester
 - faire exécuter le code à chaque robot, en branchant le robot receiver en dernier et en le gardant branché pour les affichages console
